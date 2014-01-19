@@ -49,11 +49,9 @@ http://www.gnu.org/copyleft/lesser.html
 
 Generally, this means the cards are free to use (commercially and non commercially) but must be properly attributed (see "README.txt" file) and (The library itself, not your project) re-distributed only under the same license.
 
-## Script files
+## jQuery JavaScript Library v1.4.2
 
-### FLIPPY jQuery plugin 1.0.1
+This library John Resig's jQuery library.
 
-This work is licensed under a Creative Commons Attribution-ShareAlike 3.0 Unported License.
-
-- website: [http://guilhemmarty.com/flippy](http://guilhemmarty.com/flippy)
-- author: [Guilhem MARTY](bonjour@guilhemmarty.com)
+- website: [http://jquery.com/](http://jquery.com/)
+- author: [John Resig](https://github.com/jeresig)
