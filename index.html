@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <title>29 game</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="css/master.css" media="all" />
+    <script src="js/jquery-1.4.2.min.js"></script>
+
+  </head>
+
+  <body>
+    <input type="text" name="player_name" value="Your name">
+    <button onclick="registerPlayer()">Register!</button>
+    <button onclick="getNewHand()">Get New Hand!</button>
+    <canvas id="gameCanvas"></canvas>
+    <script src="http://localhost:8070/socket.io/socket.io.js"></script>
+    <script src="js/Util29.js"></script>
+    <script src="js/Player.js"></script>
+    <script src="js/Card.js"></script>
+    <script src="js/Deck.js"></script>
+    <script src="js/Hand.js"></script>
+    <script src="js/Pot.js"></script>
+    <script src="js/client.js"></script>
+    <script>
+      // Initialise the game
+      init();
+    </script>
+
+    <div id="pot">
+      <div id="pcard0" class="pot_card_0"></div>
+      <div id="pcard1" class="pot_card_1"></div>
+      <div id="pcard2" class="pot_card_2"></div>
+      <div id="pcard3" class="pot_card_3"></div>
+    </div>
+    <br/>
+    <div id="table">
+      <div id="cards"></div>
+    </div>
+
+  </body>
+</html>
