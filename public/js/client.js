@@ -52,7 +52,16 @@ function onSocketConnected() {
     socket.on("remote played card", onRemotePlayCard);
 
     socket.on("out of turn", onOutOfTurnPlay);
+
+    socket.on("request hand", onGetHandCommand);
+
+    socket.on("debug msg", onDebugMsg);
 };
+
+// adds debugging information to the console which is received from the server.
+function onDebugMsg(data) {
+    console.log("DEBUG: " + data.info);
+}
 
 function onOutOfTurnPlay(data) {
     console.log("Out of turn play. Turn of " + players[data.turnid].getName());
@@ -142,8 +151,12 @@ function onNewPlayer(data) {
     console.log("All Remote Player: " + (new Util29().toString(remotePlayers)));
 }
 
-function getNewHand() {
-    socket.emit("get hand", {num_cards:8});
+function onGetHandCommand(data) {
+    socket.emit("get hand", data);
+};
+
+function startGame() {
+    socket.emit("start game");
 };
 
 function cardClicked(item){

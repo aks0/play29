@@ -60,7 +60,20 @@ function onSocketConnection(client) {
 
     // client selected a card to play
     client.on("select card to play", onCardToPlay);
+
+    // one of the clients has indicated to start the game
+    client.on("start game", onStartGame);
 };
+
+function onStartGame() {
+    util.log("StartGame request received. Number of players = "
+        + players.length);
+    if (players.length != 4) {
+        broadcastToAll(this, "debug msg", {info: "# players != 4"});
+    } else {
+        broadcastToAll(this, "request hand", {num_cards:8});
+    }
+}
 
 // broadcasts the event and data to all the connected clients
 function broadcastToAll(client, event, data) {
