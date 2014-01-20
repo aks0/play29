@@ -16,10 +16,15 @@ var Player = function(l_id, l_name) {
     return name;
     };
 
+    var equals = function(player) {
+        return (name === player.getName()) && (id === player.getID());
+    }
+
     return {
-    getID: getID,
-    toString: toString,
-    getName: getName
+        getID: getID,
+        equals: equals,
+        toString: toString,
+        getName: getName
     };
 };
 

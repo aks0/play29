@@ -146,6 +146,11 @@ function registerPlayer() {
 
 function onNewPlayer(data) {
     var player = new Player(data.id, data.name);
+    for (var i = 0; i < remotePlayers.length; i++) {
+        if (remotePlayers[i].equals(player)) {
+            return;
+        }
+    }
     console.log("New player connected: " + player.toString());
     remotePlayers.push(player);
     console.log("All Remote Player: " + (new Util29().toString(remotePlayers)));
