@@ -5,15 +5,20 @@ var Player = function(l_id, l_name) {
     name = l_name;
 
     var getID = function() {
-    return id;
+        return id;
     };
 
     var getName = function() {
-    return name;
+        return name;
     };
 
     var toString = function() {
-    return name;
+        return name;
+    };
+
+    var setName = function(to_name) {
+        name = to_name;
+        return this;
     };
 
     var equals = function(player) {
@@ -24,6 +29,7 @@ var Player = function(l_id, l_name) {
         getID: getID,
         equals: equals,
         toString: toString,
+        setName: setName,
         getName: getName
     };
 };

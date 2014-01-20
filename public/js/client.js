@@ -45,6 +45,8 @@ function onSocketConnected() {
 
     socket.on("receive hand", onReceiveHand);
 
+    socket.on("rename player", onRenamePlayer);
+
     socket.on("receive socket id", onReceiveSocketID);
 
     socket.on("playing cycle", onPlayingCycle);
@@ -111,7 +113,6 @@ function onPlayingCycle(data) {
     for (var i = 0; i < data.length; i++) {
         var player = new Player(data[i].id, data[i].name);
         players.push(player);
-        console.log("Avatar Name: " + myAvatar.getName());
         if (player.getName() === myAvatar.getName()) {
             myTurnID = i;
         }
@@ -144,11 +145,37 @@ function onReceiveHand(data) {
     document.getElementById("cards").innerHTML = hand_cards;
 }
 
-function registerPlayer() {
+function onRenamePlayer(data) {
+    console.log("Rename of Player requested: " + data.old_name + " -> " +
+        data.new_name);
+
+    if (players !== null) {
+
+        for (var i = 0; i < players.length; i++) {
+            if (players[i].getName() === data.old_name) {
+                players[i].setName(data.new_name);
+                break;
+            }
+        }
+    }
+
+    for (var i = 0; i < remotePlayers.length; i++) {
+        if (remotePlayers[i].getName() === data.old_name) {
+            remotePlayers[i].setName(data.new_name);
+            break;
+        }
+    }
+    console.log("Players: " + (new Util29().toString(players)));
+    console.log("RemotePlayers: " + (new Util29().toString(remotePlayers)));
+}
+
+function changePlayerName() {
     var player_name = document.getElementsByName("player_name")[0].value;
-    console.log("Player registered: " + player_name);
-    myAvatar = new Player(0, player_name);
-    socket.emit("new player", {name: player_name});
+    console.log("Player New Name: " + player_name);
+    var old_name = myAvatar.getName();
+    myAvatar.setName(player_name);
+    console.log("New Avatar Name: " + myAvatar.getName());
+    socket.emit("rename player", {old_name: old_name, new_name: player_name});
 }
 
 function onNewPlayer(data) {

@@ -82,8 +82,8 @@ function onSocketConnection(client) {
     // client is asking for a new hand from the server
     client.on("get hand", onGetHandRequest);
 
-    // listen for new player addition message
-    client.on("new player", onNewPlayer);
+    // listen for rename changes for a player
+    client.on("rename player", onRenamePlayer);
 
     // client selected a card to play
     client.on("select card to play", onCardToPlay);
@@ -121,30 +121,19 @@ function onCardToPlay(data) {
     ctoken = (ctoken + 1) % MAX_PLAYERS;
 }
 
-function onNewPlayer(data) {
-    var new_player = new Player(this.id, data.name);
-    console.log("New Player: " + data.name + " from: " + this.id);
-
-    // Broadcast new player to connected socket clients
-    this.broadcast.emit("new player", {id: new_player.getID(),
-                       name: new_player.getName()});
-
-    // Send existing players to the new player
+function onRenamePlayer(data) {
+    util.log("Rename of Player requested: " + data.old_name + " -> " +
+        data.new_name);
     for (var i = 0; i < players.length; i++) {
-        var existing_player = players[i];
-        this.emit("new player", {id: existing_player.getID(),
-                     name: existing_player.getName()});
-    };
-
-    // add new player to the players array
-    players.push(new_player);
-    util.log("Players: " + util29.toString(players));
-
-    if (players.length === MAX_PLAYERS) {
-        broadcastToAll(this, "playing cycle", serializePlayers(players));
-        ctoken = Math.floor(Math.random() * MAX_PLAYERS);
-        util.log("Chance Token = " + ctoken);
+        if (players[i].getName() === data.old_name) {
+            players[i].setName(data.new_name);
+            break;
+        }
     }
+
+    // Broadcast change of name to other players
+    this.broadcast.emit("rename player", {old_name: data.old_name,
+                       new_name: data.new_name});
 }
 
 function serializePlayer(player) {
