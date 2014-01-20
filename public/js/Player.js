@@ -5,21 +5,21 @@ var Player = function(l_id, l_name) {
     name = l_name;
 
     var getID = function() {
-	return id;
+    return id;
     };
 
     var getName = function() {
-	return name;
+    return name;
     };
 
     var toString = function() {
-	return name;
+    return name;
     };
 
     return {
-	getID: getID,
-	toString: toString,
-	getName: getName
+    getID: getID,
+    toString: toString,
+    getName: getName
     };
 };
 

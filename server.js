@@ -32,11 +32,11 @@ function init() {
 
     // Configure Socket.IO
     socket.configure(function() {
-	// Only use WebSockets
-	socket.set("transports", ["websocket"]);
+    // Only use WebSockets
+    socket.set("transports", ["websocket"]);
 
-	// Restrict log output
-	socket.set("log level", 2);
+    // Restrict log output
+    socket.set("log level", 2);
     });
 
     // Start listening for events
@@ -84,12 +84,12 @@ function broadcastToAll(client, event, data) {
 function onCardToPlay(data) {
     util.log("Chance Token: " + ctoken + " data: " + data.turnid);
     if (data.turnid !== ctoken) {
-	this.emit("out of turn", {turnid: ctoken});
-	return;
+    this.emit("out of turn", {turnid: ctoken});
+    return;
     }
 
     this.broadcast.emit("remote played card",
-			{turnid: data.turnid, card: data.card});
+            {turnid: data.turnid, card: data.card});
     this.emit("play card", {card: data.card});
     ctoken = (ctoken + 1) % MAX_PLAYERS;
 }
@@ -100,13 +100,13 @@ function onNewPlayer(data) {
 
     // Broadcast new player to connected socket clients
     this.broadcast.emit("new player", {id: new_player.getID(),
-				       name: new_player.getName()});
+                       name: new_player.getName()});
 
     // Send existing players to the new player
     for (var i = 0; i < players.length; i++) {
-	var existing_player = players[i];
-	this.emit("new player", {id: existing_player.getID(),
-				 name: existing_player.getName()});
+    var existing_player = players[i];
+    this.emit("new player", {id: existing_player.getID(),
+                 name: existing_player.getName()});
     };
 
     // add new player to the players array
@@ -114,9 +114,9 @@ function onNewPlayer(data) {
     util.log("Players: " + util29.toString(players));
 
     if (players.length === MAX_PLAYERS) {
-	broadcastToAll(this, "playing cycle", serializePlayers(players));
-	ctoken = Math.floor(Math.random() * MAX_PLAYERS);
-	util.log("Chance Token = " + ctoken);
+    broadcastToAll(this, "playing cycle", serializePlayers(players));
+    ctoken = Math.floor(Math.random() * MAX_PLAYERS);
+    util.log("Chance Token = " + ctoken);
     }
 }
 
@@ -131,7 +131,7 @@ function serializePlayers(players) {
     var sr = new Object();
     sr.length = players.length;
     for (var i = 0; i < players.length; i++) {
-	sr[i] = serializePlayer(players[i]);
+    sr[i] = serializePlayer(players[i]);
     }
     return sr;
 }
@@ -140,16 +140,16 @@ function serializeHand(hand) {
     var sr = new Object();
     sr.length = hand.length;
     for (var i = 0; i < hand.length; i++) {
-	sr[i] = hand[i].getDenom() + ":" + hand[i].getSuit();
+    sr[i] = hand[i].getDenom() + ":" + hand[i].getSuit();
     }
     return sr;
 }
 
 function onGetHandRequest(data) {
     util.log("Player " + this.id + " is asking for " + data.num_cards +
-	     " cards");
+         " cards");
     if (deck.isEmpty()) {
-	deck.init().shuffle();
+    deck.init().shuffle();
     }
 
     var hand = deck.drawSomeCards(data.num_cards);

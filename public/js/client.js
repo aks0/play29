@@ -30,7 +30,7 @@ function init() {
 
     // Initialise socket connection
     socket = io.connect("http://localhost", {port: 8070,
-					     transports: ["websocket"]});
+                         transports: ["websocket"]});
     setEventHandlers();
 };
 
@@ -80,8 +80,8 @@ function onRemotePlayCard(data) {
 // adds a new attribute to the given card code
 function addAttribute(card_html, attr, value) {
     var new_code = card_html.replace(
-	'marker_tag=""',
-	attr + '=\"' + value + '\"' + ' marker_tag=""'
+    'marker_tag=""',
+    attr + '=\"' + value + '\"' + ' marker_tag=""'
     );
     return new_code;
 }
@@ -103,19 +103,19 @@ function onPlayingCycle(data) {
     pot = new Pot();
 
     for (var i = 0; i < data.length; i++) {
-	var player = new Player(data[i].id, data[i].name);
-	players.push(player);
-	if (player.getName() === myAvatar.getName()) {
-	    myTurnID = i;
-	}
+    var player = new Player(data[i].id, data[i].name);
+    players.push(player);
+    if (player.getName() === myAvatar.getName()) {
+        myTurnID = i;
+    }
     }
 
     displayOrder[myTurnID] = 0;
     var turn = 1;
     for (var i = (myTurnID + 1) % data.length;
-	 turn < data.length;
-	 i = (i + 1) % data.length, turn++) {
-	displayOrder[i] = turn;
+     turn < data.length;
+     i = (i + 1) % data.length, turn++) {
+    displayOrder[i] = turn;
     }
 
     console.log("Playing order: " + (new Util29().toString(players)));
@@ -126,13 +126,13 @@ function onPlayingCycle(data) {
 function onReceiveHand(data) {
     hand = new Hand();
     for (var i = 0; i < data.length; i++) {
-	hand.add(genCard(data[i]));
+    hand.add(genCard(data[i]));
     }
     console.log("Hand: " + hand.toString());
 
     var hand_cards = "";
     for(var i = 0; i < hand.length(); i++) {
-	hand_cards += cardHTML(hand.get(i).getDenom(), hand.get(i).getSuit());
+    hand_cards += cardHTML(hand.get(i).getDenom(), hand.get(i).getSuit());
     }
     document.getElementById("cards").innerHTML = hand_cards;
 }
@@ -165,8 +165,8 @@ function cardClicked(item){
 
     // the pot cards are un-clickable
     if ($(item.parentNode).attr("id").indexOf("pcard") !== -1) {
-	console.log("No use clicking a pot card");
-	return;
+    console.log("No use clicking a pot card");
+    return;
     }
 
     socket.emit("select card to play", {turnid: myTurnID, card: id_token});
@@ -241,16 +241,16 @@ function denomToName(denom) {
 
 function getSpanTag(suit, direction) {
     var tag = "<span class=\"suit " + direction + "\">" +
-	suitToCode(suit) + "</span>";
+    suitToCode(suit) + "</span>";
     return tag;
 }
 
 function matchAny(denom, suit, denoms, direction) {
     var data = "";
     for(var i = 0; i < denoms.length; i++) {
-	if (denom == denoms[i]) {
-	    data += getSpanTag(suit, direction);
-	}
+    if (denom == denoms[i]) {
+        data += getSpanTag(suit, direction);
+    }
     }
     return data;
 }
@@ -258,11 +258,11 @@ function matchAny(denom, suit, denoms, direction) {
 function computeSuitPoints(denom, suit) {
     var data = "";
     var dirs = ["top_left", "top_center", "top_right",
-		"middle_top_left", "middle_top_center", "middle_top_right",
-		"middle_left", "middle_center", "middle_right",
-		"middle_bottom_left", "middle_bottom_center",
-		"middle_bottom_right", "bottom_left", "bottom_center",
-		"bottom_right"];
+        "middle_top_left", "middle_top_center", "middle_top_right",
+        "middle_left", "middle_center", "middle_right",
+        "middle_bottom_left", "middle_bottom_center",
+        "middle_bottom_right", "bottom_left", "bottom_center",
+        "bottom_right"];
 
     data += matchAny(denom, suit, ['4', '5', '6', '7', '8', '9','10'], dirs[0]);
     data += matchAny(denom, suit, ['2', '3'], dirs[1]);
@@ -284,23 +284,23 @@ function computeSuitPoints(denom, suit) {
 
 function isFaceCard(denom) {
     if (denom == "J" || denom == "Q" || denom == "K") {
-	return true;
+    return true;
     }
     return false;
 }
 
 function cardHTML(denom, suit) {
     if (!isValidCard(denom, suit)) {
-	throw "not a valid card: " + denom + " " + suit;
+    throw "not a valid card: " + denom + " " + suit;
     }
 
     var card = "";
 
     // <div id="9D" class="card diamond nine" onclick="cardClicked(this)">
     card += "<div id=\"" + denom + ":" + suit + "\" class=\"card " +
-	suitToName(suit) + " " + denomToName(denom) + "\"" +
-	" marker_tag=\"\"" +
-	" onclick=\"cardClicked(this)\">";
+    suitToName(suit) + " " + denomToName(denom) + "\"" +
+    " marker_tag=\"\"" +
+    " onclick=\"cardClicked(this)\">";
 
     // <div class="corner top">
     card += "<div class=\"corner top\">";
@@ -315,18 +315,18 @@ function cardHTML(denom, suit) {
     card += "</div>";
 
     if (isFaceCard(denom)) {
-	// <div class="container">
-	card += "<div class=\"container\">";
+    // <div class="container">
+    card += "<div class=\"container\">";
 
-	// <img src="./faces/face-queen-diamond.png" class="image_container"/>
-	card += "<img src=\"./faces/face-" + denomToName(denom) +
-	    "-" + suitToName(suit) + ".png\" class=\"image_container\"/>";
+    // <img src="./faces/face-queen-diamond.png" class="image_container"/>
+    card += "<img src=\"./faces/face-" + denomToName(denom) +
+        "-" + suitToName(suit) + ".png\" class=\"image_container\"/>";
 
-	// </div>
-	card += "</div>";
+    // </div>
+    card += "</div>";
     } else {
-	// middle suit spots
-	card += computeSuitPoints(denom, suit);
+    // middle suit spots
+    card += computeSuitPoints(denom, suit);
     }
 
     // <div class="corner bottom">
