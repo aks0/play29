@@ -18,7 +18,7 @@ var Player = function(l_id, l_name) {
 
     var equals = function(player) {
         return (name === player.getName()) && (id === player.getID());
-    }
+    };
 
     return {
         getID: getID,

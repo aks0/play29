@@ -48,9 +48,36 @@ var setEventHandlers = function () {
     socket.sockets.on("connection", onSocketConnection);
 };
 
+function updatePlayersInfo(client) {
+    client.emit("receive socket id", {id: client.id});
+    var new_player = new Player(client.id, client.id);
+
+    // Broadcast new player to connected socket clients
+    client.broadcast.emit("new player", {id: new_player.getID(),
+                       name: new_player.getName()});
+
+    // Send existing players to the new player
+    for (var i = 0; i < players.length; i++) {
+        var existing_player = players[i];
+        client.emit("new player", {id: existing_player.getID(),
+                     name: existing_player.getName()});
+    };
+
+    // add new player to the players array
+    players.push(new_player);
+    util.log("Players: " + util29.toString(players));
+
+    if (players.length === MAX_PLAYERS) {
+        broadcastToAll(client, "playing cycle", serializePlayers(players));
+        ctoken = Math.floor(Math.random() * MAX_PLAYERS);
+        util.log("Chance Token = " + ctoken);
+    }
+}
+
 // New socket connection
 function onSocketConnection(client) {
     util.log("New player has connected: " + client.id);
+    updatePlayersInfo(client);
 
     // client is asking for a new hand from the server
     client.on("get hand", onGetHandRequest);

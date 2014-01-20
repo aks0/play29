@@ -45,6 +45,8 @@ function onSocketConnected() {
 
     socket.on("receive hand", onReceiveHand);
 
+    socket.on("receive socket id", onReceiveSocketID);
+
     socket.on("playing cycle", onPlayingCycle);
 
     socket.on("play card", onPlayCard);
@@ -57,6 +59,10 @@ function onSocketConnected() {
 
     socket.on("debug msg", onDebugMsg);
 };
+
+function onReceiveSocketID(data) {
+    myAvatar = new Player(0, data.id);
+}
 
 // adds debugging information to the console which is received from the server.
 function onDebugMsg(data) {
@@ -103,19 +109,20 @@ function onPlayingCycle(data) {
     pot = new Pot();
 
     for (var i = 0; i < data.length; i++) {
-    var player = new Player(data[i].id, data[i].name);
-    players.push(player);
-    if (player.getName() === myAvatar.getName()) {
-        myTurnID = i;
-    }
+        var player = new Player(data[i].id, data[i].name);
+        players.push(player);
+        console.log("Avatar Name: " + myAvatar.getName());
+        if (player.getName() === myAvatar.getName()) {
+            myTurnID = i;
+        }
     }
 
     displayOrder[myTurnID] = 0;
     var turn = 1;
     for (var i = (myTurnID + 1) % data.length;
-     turn < data.length;
-     i = (i + 1) % data.length, turn++) {
-    displayOrder[i] = turn;
+         turn < data.length;
+         i = (i + 1) % data.length, turn++) {
+        displayOrder[i] = turn;
     }
 
     console.log("Playing order: " + (new Util29().toString(players)));
