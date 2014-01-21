@@ -25,8 +25,8 @@ var Deck = function() {
      * Reinitializes the deck
      */
     var init = function() {
-    computeDeck();
-    return this;
+        computeDeck();
+        return this;
     }
 
     var computeDeck = function() {
