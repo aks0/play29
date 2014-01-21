@@ -9,8 +9,12 @@ util29 = require("./public/js/Util29").Util29(),
 Deck = require("./public/js/Deck").Deck,
 // card class
 Card = require("./public/js/Card").Card,
+// card class
+TrumpCard = require("./public/js/TrumpCard").TrumpCard,
 // chance token for the round
 ctoken,
+// trump
+trump,
 // Player class
 Player = require("./public/js/Player").Player;
 
@@ -25,6 +29,7 @@ function init() {
     players = new Array();
     deck = new Deck();
     ctoken = -1;
+    trump = null;
 
     // set up socket to listen on port PORT
     socket = io.listen(PORT);
@@ -101,6 +106,8 @@ function onStartGame() {
     } else {
         broadcastToAll(this, "request hand", {num_cards:8});
     }
+    trump = new TrumpCard('4', 'H');
+    broadcastToAll(this, "trump card", {trumpcard: trump.serialize()});
 }
 
 // broadcasts the event and data to all the connected clients
@@ -157,7 +164,7 @@ function serializeHand(hand) {
     var sr = new Object();
     sr.length = hand.length;
     for (var i = 0; i < hand.length; i++) {
-        sr[i] = hand[i].getDenom() + ":" + hand[i].getSuit();
+        sr[i] = hand[i].serialize();
     }
     return sr;
 }

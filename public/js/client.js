@@ -10,6 +10,8 @@ hand,
 myTurnID,
 // display order with playing cycle order
 displayOrder,
+// trump card
+trump,
 // all players
 players,
 // pot with the played cards
@@ -28,6 +30,7 @@ function initState() {
     hand = null;
     pot = null;
     myAvatar = null;
+    trump = null;
 }
 
 function init() {
@@ -62,6 +65,8 @@ function onSocketConnected() {
 
     socket.on("remote played card", onRemotePlayCard);
 
+    socket.on("trump card", onTrumpCard);
+
     socket.on("out of turn", onOutOfTurnPlay);
 
     socket.on("request hand", onGetHandCommand);
@@ -71,6 +76,11 @@ function onSocketConnected() {
 
 function onResetState() {
     initState();
+}
+
+function onTrumpCard(data) {
+    console.log("trump card received: " + data.trumpcard);
+    trump = genTrumpCard(data.trumpcard);
 }
 
 function onReceiveSocketID(data) {
@@ -114,6 +124,17 @@ function onPlayCard(data) {
     card_node.style.zIndex = pot.size() - 1;
     card_node.parentNode.removeChild(card_node);
     document.getElementById("pcard0").innerHTML = card_node.outerHTML;
+
+    checkPotWinner();
+}
+
+function checkPotWinner() {
+    console.log("checking PotWinner, length = " + pot.size());
+    if (pot.size() !== 4) {
+        return;
+    }
+    var winning_card = pot.getPotWinner(trump);
+    console.log("Winning Card: " + winning_card.serialize());
 }
 
 function onPlayingCycle(data) {
