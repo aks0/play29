@@ -20,13 +20,18 @@ remotePlayers;
 var all_denoms = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
 var all_suits = ['C','D','S','H'];
 
-function init() {
+function initState() {
     players = null;
     displayOrder = null;
     myTurnID = -1;
     remotePlayers = [];
     hand = null;
     pot = null;
+    myAvatar = null;
+}
+
+function init() {
+    initState();
 
     // Initialise socket connection
     socket = io.connect("http://localhost", {port: 8070,
@@ -40,6 +45,8 @@ var setEventHandlers = function() {
 
 function onSocketConnected() {
     console.log("Connected to socket server");
+
+    socket.on("reset state", onResetState);
 
     socket.on("new player", onNewPlayer);
 
@@ -61,6 +68,10 @@ function onSocketConnected() {
 
     socket.on("debug msg", onDebugMsg);
 };
+
+function onResetState() {
+    initState();
+}
 
 function onReceiveSocketID(data) {
     myAvatar = new Player(0, data.id);
@@ -204,8 +215,8 @@ function cardClicked(item){
 
     // the pot cards are un-clickable
     if ($(item.parentNode).attr("id").indexOf("pcard") !== -1) {
-    console.log("No use clicking a pot card");
-    return;
+        console.log("No use clicking a pot card");
+        return;
     }
 
     socket.emit("select card to play", {turnid: myTurnID, card: id_token});

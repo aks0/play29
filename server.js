@@ -77,6 +77,7 @@ function updatePlayersInfo(client) {
 // New socket connection
 function onSocketConnection(client) {
     util.log("New player has connected: " + client.id);
+    client.emit("reset state");
     updatePlayersInfo(client);
 
     // client is asking for a new hand from the server

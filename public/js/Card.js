@@ -99,8 +99,7 @@ function stripID(str) {
 }
 
 /**
- * Factory method for creating a new Card from String
- * "denom:suit"
+ * Factory method for creating a new Card from String "denom:suit"
  */
 function genCard(str) {
     var arr = stripID(str);
