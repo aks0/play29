@@ -22,6 +22,7 @@ var Player = function(l_id, l_name) {
     // pot cards which the player can see
     pot = null,
     points = null,
+    subRound = 0,
     trump = null;
 
     var getID = function() {
@@ -121,6 +122,15 @@ var Player = function(l_id, l_name) {
         return points;
     };
 
+    var getSubRound = function() {
+        return subRound;
+    };
+
+    var incrSubRound = function() {
+        subRound++;
+        return this;
+    };
+
     return {
         getID: getID,
         equals: equals,
@@ -135,6 +145,8 @@ var Player = function(l_id, l_name) {
         addPoints: addPoints,
         getPoints: getPoints,
         getPot: getPot,
+        getSubRound: getSubRound,
+        incrSubRound: incrSubRound,
         getTrump: getTrump,
         setTrump: setTrump
     };

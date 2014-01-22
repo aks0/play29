@@ -34,6 +34,17 @@ var setEventHandlers = function() {
     socket.on("connect", onSocketConnected);
 };
 
+function subRoundCompleted() {
+    console.log("SubRound #" + myAvatar.getSubRound() + " is completed.");
+    // last match for the round
+    if (myAvatar.getSubRound() === 7) {
+        // compute GameScore in terms of the 6-cards
+        // reset sub-round and sub-round points.
+    }
+    myAvatar.incrSubRound();
+    myAvatar.getPot().clear();
+}
+
 function checkPotWinner() {
     var pot = myAvatar.getPot();
     console.log("checking PotWinner, length = " + pot.size());
@@ -48,7 +59,7 @@ function checkPotWinner() {
     console.log("Pot Points: " + pot.getPoints());
     myAvatar.addPoints(winner_id, pot.getPoints());
     console.log("Player Points: " + myAvatar.getPoints());
-    pot.clear();
+    subRoundCompleted();
 }
 
 /******************************************************************************/
