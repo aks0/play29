@@ -96,11 +96,20 @@ var Pot = function() {
         return cardtokenToTurnIDMap[card_token];
     };
 
+    var getPoints = function() {
+        var points = 0;
+        for (var i = 0; i < pot.length; i++) {
+            points += pot[i].getPoints();
+        }
+        return points;
+    };
+
     return {
         isEmpty: isEmpty,
         addCard: addCard,
         size: size,
         getPotWinner: getPotWinner,
+        getPoints: getPoints,
         cardPlayedBy: cardPlayedBy,
         clear: clear
     };

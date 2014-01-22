@@ -52,7 +52,11 @@ function checkPotWinner() {
     }
     var winning_card = pot.getPotWinner(myAvatar.getTrump());
     console.log("Winning Card: " + winning_card.serialize());
-    console.log("Winner: " + pot.cardPlayedBy(winning_card.serialize()));
+    var winner_id = pot.cardPlayedBy(winning_card.serialize());
+    console.log("Winner: " + winner_id);
+    console.log("Pot Points: " + pot.getPoints());
+    myAvatar.addPoints(winner_id, pot.getPoints());
+    console.log("Player Points: " + myAvatar.getPoints());
 }
 
 /******************************************************************************/

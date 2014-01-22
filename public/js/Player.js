@@ -21,6 +21,7 @@ var Player = function(l_id, l_name) {
     hand = null,
     // pot cards which the player can see
     pot = null,
+    points = null,
     trump = null;
 
     var getID = function() {
@@ -105,6 +106,21 @@ var Player = function(l_id, l_name) {
         return pot;
     };
 
+    var addPoints = function(player_turn_id, incr) {
+        if (points === null) {
+            points = new Array();
+            for (var i = 0; i < 4; i++) {
+                points.push(0);
+            }
+        }
+        points[player_turn_id] += incr;
+        return this;
+    };
+
+    var getPoints = function() {
+        return points;
+    };
+
     return {
         getID: getID,
         equals: equals,
@@ -116,6 +132,8 @@ var Player = function(l_id, l_name) {
         setAllPlayers: setAllPlayers,
         renamePlayer: renamePlayer,
         getHand: getHand,
+        addPoints: addPoints,
+        getPoints: getPoints,
         getPot: getPot,
         getTrump: getTrump,
         setTrump: setTrump

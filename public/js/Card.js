@@ -65,6 +65,20 @@ var Card = function(denom, suit) {
         }
     };
 
+    var getPoints = function() {
+        switch(denom) {
+            case '7': 
+            case '8': 
+            case 'Q': 
+            case 'K': return 0;
+            case '10': 
+            case 'A': return 1;
+            case '9': return 2;
+            case 'J': return 3;
+            default: return -1;
+        }
+    };
+
     var equals = function(ocard) {
         if (ocard === null) {
             return false;
@@ -93,6 +107,7 @@ var Card = function(denom, suit) {
         getDenom: getDenom,
         getSuit: getSuit,
         getRank: getRank,
+        getPoints: getPoints,
         equals: equals,
         serialize: serialize,
         toString: toString
