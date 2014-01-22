@@ -9,12 +9,8 @@ util29 = require("./public/js/Util29").Util29(),
 Deck = require("./public/js/Deck").Deck,
 // card class
 Card = require("./public/js/Card").Card,
-// card class
-TrumpCard = require("./public/js/TrumpCard").TrumpCard,
 // chance token for the round
 ctoken,
-// trump
-trump,
 // Player class
 Player = require("./public/js/Player").Player;
 
@@ -29,7 +25,6 @@ function init() {
     players = new Array();
     deck = new Deck();
     ctoken = -1;
-    trump = null;
 
     // set up socket to listen on port PORT
     socket = io.listen(PORT);
@@ -97,14 +92,13 @@ function onSocketConnection(client) {
     // one of the clients has indicated to start the game
     client.on("start game", onStartGame);
 
-    // when one of the players sets a trump
-    client.on("trump set", onTrumpSet);
+    // if one client wants to send some information to all other clients
+    client.on("broadcast", onBroadcast);
 };
 
-function onTrumpSet(data) {
-    var arr = data.trump_token.split(":");
-    trump = new TrumpCard(arr[0], arr[1]);
-    this.broadcast.emit("trump received", {trump_token: data.trump_token});
+function onBroadcast(data) {
+    console.log("broadcast: event#" + data.event + " info#" + data.info);
+    this.broadcast.emit(data.event, {info: data.info});
 }
 
 function onStartGame() {
@@ -115,8 +109,6 @@ function onStartGame() {
     } else {
         broadcastToAll(this, "request hand", {num_cards:8});
     }
-//    trump = new TrumpCard('4', 'H');
-//    broadcastToAll(this, "trump card", {trump_token: trump.serialize()});
 }
 
 // broadcasts the event and data to all the connected clients

@@ -79,8 +79,8 @@ function onResetState() {
 }
 
 function onTrumpReceived(data) {
-    console.log("trump card received: " + data.trump_token);
-    trump = genTrumpCard(data.trump_token);
+    console.log("trump card received: " + data.info);
+    trump = genTrumpCard(data.info);
 }
 
 function onReceiveSocketID(data) {
@@ -141,7 +141,7 @@ function trumpEntered() {
     var trump_token = document.getElementsByName("trump")[0].value;
     console.log("Trump Token: " + trump_token);
     trump = genTrumpCard(trump_token);
-    socket.emit("trump set", {trump_token: trump_token});
+    socket.emit("broadcast", {event: "trump received", info: trump_token});
 }
 
 function onPlayingCycle(data) {
