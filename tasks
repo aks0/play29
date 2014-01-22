@@ -1,11 +1,7 @@
-- Client-Server model with Client connecting to the server, asking for i cards
-  and server sending i cards list and client shows those cards to the user
-- Create hand to display
-- Create Pot to display
-- Play a card and send to server. Remove card from hand and add to the pot
-- Adding support for multiple players and showing disjoint set of cards
-- Simulate game playing between the 4 players
-- Bidding and extra features (trump, open trump, K/Q pair, 7th card)
+- Game features (trump, open trump, K/Q pair, 7th card, last hand)
+- Game rules regarding playing a card, opening trump etc.
+- Teaming up players
+- Bidding functionality? 
 
 Long shots->
 - Create draging motion for playing a card
