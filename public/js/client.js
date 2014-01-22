@@ -6,8 +6,6 @@ socket,
 myAvatar,
 // hand of cards
 hand,
-// my turn id [0, 1, 2, 3]
-myTurnID,
 // display order with playing cycle order
 displayOrder,
 // all players
@@ -24,7 +22,6 @@ function initState() {
     console.log("initState: reseting everything.");
     players = null;
     displayOrder = null;
-    myTurnID = -1;
     remotePlayers = [];
     hand = null;
     pot = null;
@@ -98,7 +95,8 @@ function cardClicked(item){
         return;
     }
 
-    socket.emit("select card to play", {turnid: myTurnID, card: id_token});
+    socket.emit("select card to play",
+        {turnid: myAvatar.getTurnID(), card: id_token});
 }
 
 /******************************************************************************/
@@ -186,13 +184,13 @@ function onPlayingCycle(data) {
         var player = new Player(data[i].id, data[i].name);
         players.push(player);
         if (player.getName() === myAvatar.getName()) {
-            myTurnID = i;
+            myAvatar.setTurnID(i);
         }
     }
 
-    displayOrder[myTurnID] = 0;
+    displayOrder[myAvatar.getTurnID()] = 0;
     var turn = 1;
-    for (var i = (myTurnID + 1) % data.length;
+    for (var i = (myAvatar.getTurnID() + 1) % data.length;
          turn < data.length;
          i = (i + 1) % data.length, turn++) {
         displayOrder[i] = turn;
@@ -200,7 +198,7 @@ function onPlayingCycle(data) {
 
     console.log("Playing order: " + (new Util29().toString(players)));
     console.log("Display Order: " + displayOrder);
-    console.log("Turn ID = " + myTurnID);
+    console.log("Turn ID = " + myAvatar.getTurnID());
 }
 
 function onReceiveHand(data) {

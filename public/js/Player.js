@@ -3,27 +3,28 @@ var Player = function(l_id, l_name) {
     var
     id = l_id,
     name = l_name,
+    turnID = -1,
     trump = null;
 
     var getID = function() {
-        return this.id;
+        return id;
     };
 
     var getName = function() {
-        return this.name;
+        return name;
     };
 
     var toString = function() {
-        return this.name;
+        return name;
     };
 
     var setName = function(to_name) {
-        this.name = to_name;
+        name = to_name;
         return this;
     };
 
     var equals = function(player) {
-        return (this.name === player.getName()) && (this.id === player.getID());
+        return (name === player.getName()) && (id === player.getID());
     };
 
     var getTrump = function() {
@@ -35,12 +36,23 @@ var Player = function(l_id, l_name) {
         return this;
     };
 
+    var getTurnID = function() {
+        return this.turnID;
+    };
+
+    var setTurnID = function(turnID) {
+        this.turnID = turnID;
+        return this;
+    };
+
     return {
         getID: getID,
         equals: equals,
         toString: toString,
         setName: setName,
         getName: getName,
+        getTurnID: getTurnID,
+        setTurnID: setTurnID,
         getTrump: getTrump,
         setTrump: setTrump
     };
