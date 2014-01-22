@@ -10,8 +10,6 @@ hand,
 myTurnID,
 // display order with playing cycle order
 displayOrder,
-// trump card
-trump,
 // all players
 players,
 // pot with the played cards
@@ -23,6 +21,7 @@ var all_denoms = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
 var all_suits = ['C','D','S','H'];
 
 function initState() {
+    console.log("initState: reseting everything.");
     players = null;
     displayOrder = null;
     myTurnID = -1;
@@ -30,7 +29,6 @@ function initState() {
     hand = null;
     pot = null;
     myAvatar = null;
-    trump = null;
 }
 
 function init() {
@@ -46,34 +44,6 @@ var setEventHandlers = function() {
     socket.on("connect", onSocketConnected);
 };
 
-function onSocketConnected() {
-    console.log("Connected to socket server");
-
-    socket.on("reset state", onResetState);
-
-    socket.on("new player", onNewPlayer);
-
-    socket.on("receive hand", onReceiveHand);
-
-    socket.on("rename player", onRenamePlayer);
-
-    socket.on("receive socket id", onReceiveSocketID);
-
-    socket.on("playing cycle", onPlayingCycle);
-
-    socket.on("play card", onPlayCard);
-
-    socket.on("remote played card", onRemotePlayCard);
-
-    socket.on("trump received", onTrumpReceived);
-
-    socket.on("out of turn", onOutOfTurnPlay);
-
-    socket.on("request hand", onGetHandCommand);
-
-    socket.on("debug msg", onDebugMsg);
-};
-
 // adds a new attribute to the given card code
 function addAttribute(card_html, attr, value) {
     var new_code = card_html.replace(
@@ -85,10 +55,11 @@ function addAttribute(card_html, attr, value) {
 
 function checkPotWinner() {
     console.log("checking PotWinner, length = " + pot.size());
-    if (pot.size() !== 4 || trump === null) {
+    console.log("trump is " + myAvatar.getTrump());
+    if (pot.size() !== 4 || myAvatar.getTrump() === null) {
         return;
     }
-    var winning_card = pot.getPotWinner(trump);
+    var winning_card = pot.getPotWinner(myAvatar.getTrump());
     console.log("Winning Card: " + winning_card.serialize());
 }
 
@@ -97,7 +68,8 @@ function checkPotWinner() {
 function trumpEntered() {
     var trump_token = document.getElementsByName("trump")[0].value;
     console.log("Trump Token: " + trump_token);
-    trump = genTrumpCard(trump_token);
+    var trump = genTrumpCard(trump_token);
+    myAvatar.setTrump(trump);
     socket.emit("broadcast", {event: "trump received", info: trump_token});
 }
 
@@ -131,17 +103,46 @@ function cardClicked(item){
 
 /******************************************************************************/
 // Event-handlers for events triggered from server or other clients 
+function onSocketConnected() {
+    console.log("Connected to socket server");
+
+    socket.on("reset state", onResetState);
+
+    socket.on("new player", onNewPlayer);
+
+    socket.on("receive hand", onReceiveHand);
+
+    socket.on("rename player", onRenamePlayer);
+
+    socket.on("receive socket id", onReceiveSocketID);
+
+    socket.on("playing cycle", onPlayingCycle);
+
+    socket.on("play card", onPlayCard);
+
+    socket.on("remote played card", onRemotePlayCard);
+
+    socket.on("trump received", onTrumpReceived);
+
+    socket.on("out of turn", onOutOfTurnPlay);
+
+    socket.on("request hand", onGetHandCommand);
+
+    socket.on("debug msg", onDebugMsg);
+};
+
 function onResetState() {
     initState();
 }
 
-function onTrumpReceived(data) {
-    console.log("trump card received: " + data.info);
-    trump = genTrumpCard(data.info);
-}
-
 function onReceiveSocketID(data) {
     myAvatar = new Player(0, data.id);
+}
+
+function onTrumpReceived(data) {
+    console.log("trump card received: " + data.info);
+    var trump = genTrumpCard(data.info);
+    myAvatar.setTrump(trump);
 }
 
 // adds debugging information to the console which is received from the server.
