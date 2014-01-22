@@ -143,7 +143,8 @@ function onDebugMsg(data) {
 }
 
 function onOutOfTurnPlay(data) {
-    console.log("Out of turn play. Turn of " + players[data.turnid].getName());
+    console.log("Out of turn play. Turn of " +
+        myAvatar.getPlayerAt(data.turnid));
 }
 
 function onRemotePlayCard(data) {
