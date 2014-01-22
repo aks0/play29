@@ -52,6 +52,7 @@ function checkPotWinner() {
     }
     var winning_card = pot.getPotWinner(myAvatar.getTrump());
     console.log("Winning Card: " + winning_card.serialize());
+    console.log("Winner: " + pot.cardPlayedBy(winning_card.serialize()));
 }
 
 /******************************************************************************/
@@ -151,7 +152,7 @@ function onRemotePlayCard(data) {
     var pot = myAvatar.getPot();
     console.log("Remote player " + myAvatar.getPlayerAt(data.turnid) +
         " played a card");
-    pot.addCard(data.card);
+    pot.addCard(data.card, data.turnid);
     var pot_index = positions[myAvatar.getTurnID() - data.turnid];
     var arr = stripID(data.card);
     var card_code = cardHTML(arr[0], arr[1]);
@@ -166,7 +167,7 @@ function onPlayCard(data) {
 
     var card_node = document.getElementById(data.card);
     var pot = myAvatar.getPot();
-    pot.addCard(data.card);
+    pot.addCard(data.card, myAvatar.getTurnID());
     card_node.style.zIndex = pot.size() - 1;
     card_node.parentNode.removeChild(card_node);
     document.getElementById("pcard0").innerHTML = card_node.outerHTML;

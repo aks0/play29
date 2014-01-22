@@ -11,7 +11,9 @@ try {
 }
 
 var Pot = function() {
-    var pot = new Array();
+    var
+    pot = new Array(),
+    cardtokenToTurnIDMap = new Object();
 
     var isEmpty = function() {
         if (pot === null || pot.length === 0) {
@@ -21,12 +23,13 @@ var Pot = function() {
     };
 
     // token of cards in the pot
-    var addCard = function(card_token) {
+    var addCard = function(card_token, turnID) {
         if (pot.length === 4) {
             throw "Pot full with 4 cards. No space for " + card_token;
         }
         var card = genCard(card_token);
         pot.push(card);
+        cardtokenToTurnIDMap[card_token] = turnID;
     };
 
     var clear = function() {
@@ -89,11 +92,16 @@ var Pot = function() {
         }
     };
 
+    var cardPlayedBy = function(card_token) {
+        return cardtokenToTurnIDMap[card_token];
+    };
+
     return {
         isEmpty: isEmpty,
         addCard: addCard,
         size: size,
         getPotWinner: getPotWinner,
+        cardPlayedBy: cardPlayedBy,
         clear: clear
     };
 };
