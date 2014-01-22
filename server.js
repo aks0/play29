@@ -83,9 +83,6 @@ function onSocketConnection(client) {
     // client is asking for a new hand from the server
     client.on("get hand", onGetHandRequest);
 
-    // listen for rename changes for a player
-    client.on("rename player", onRenamePlayer);
-
     // client selected a card to play
     client.on("select card to play", onCardToPlay);
 
@@ -128,21 +125,6 @@ function onCardToPlay(data) {
             {turnid: data.turnid, card: data.card});
     this.emit("play card", {card: data.card});
     ctoken = (ctoken + 1) % MAX_PLAYERS;
-}
-
-function onRenamePlayer(data) {
-    util.log("Rename of Player requested: " + data.old_name + " -> " +
-        data.new_name);
-    for (var i = 0; i < players.length; i++) {
-        if (players[i].getName() === data.old_name) {
-            players[i].setName(data.new_name);
-            break;
-        }
-    }
-
-    // Broadcast change of name to other players
-    this.broadcast.emit("rename player", {old_name: data.old_name,
-                       new_name: data.new_name});
 }
 
 function serializePlayer(player) {

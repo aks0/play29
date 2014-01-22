@@ -185,22 +185,22 @@ function onReceiveHand(data) {
 }
 
 function onRenamePlayer(data) {
-    console.log("Rename of Player requested: " + data.old_name + " -> " +
-        data.new_name);
+    console.log("Rename of Player requested: " + data.info.old_name + " -> " +
+        data.info.new_name);
 
     if (players !== null) {
 
         for (var i = 0; i < players.length; i++) {
-            if (players[i].getName() === data.old_name) {
-                players[i].setName(data.new_name);
+            if (players[i].getName() === data.info.old_name) {
+                players[i].setName(data.info.new_name);
                 break;
             }
         }
     }
 
     for (var i = 0; i < remotePlayers.length; i++) {
-        if (remotePlayers[i].getName() === data.old_name) {
-            remotePlayers[i].setName(data.new_name);
+        if (remotePlayers[i].getName() === data.info.old_name) {
+            remotePlayers[i].setName(data.info.new_name);
             break;
         }
     }
@@ -214,7 +214,9 @@ function changePlayerName() {
     var old_name = myAvatar.getName();
     myAvatar.setName(player_name);
     console.log("New Avatar Name: " + myAvatar.getName());
-    socket.emit("rename player", {old_name: old_name, new_name: player_name});
+    socket.emit("broadcast", {event: "rename player",
+        info: {old_name: old_name, new_name: player_name}
+    });
 }
 
 function onNewPlayer(data) {
