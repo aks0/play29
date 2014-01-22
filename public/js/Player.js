@@ -4,6 +4,8 @@ var Player = function(l_id, l_name) {
     id = l_id,
     name = l_name,
     turnID = -1,
+    // remote players also playing the game
+    remotePlayers = [];
     trump = null;
 
     var getID = function() {
@@ -45,6 +47,20 @@ var Player = function(l_id, l_name) {
         return this;
     };
 
+    var getRemotePlayers = function() {
+        return remotePlayers;
+    };
+
+    var addRemotePlayer = function(player) {
+        for (var i = 0; i < remotePlayers.length; i++) {
+            if (remotePlayers[i].equals(player)) {
+                return this;
+            }
+        }
+        remotePlayers.push(player);
+        return this;
+    };
+
     return {
         getID: getID,
         equals: equals,
@@ -53,6 +69,8 @@ var Player = function(l_id, l_name) {
         getName: getName,
         getTurnID: getTurnID,
         setTurnID: setTurnID,
+        getRemotePlayers: getRemotePlayers,
+        addRemotePlayer: addRemotePlayer,
         getTrump: getTrump,
         setTrump: setTrump
     };

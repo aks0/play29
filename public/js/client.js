@@ -11,9 +11,7 @@ displayOrder,
 // all players
 players,
 // pot with the played cards
-pot,
-// remote players also playing this game
-remotePlayers;
+pot;
 
 var all_denoms = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
 var all_suits = ['C','D','S','H'];
@@ -22,7 +20,6 @@ function initState() {
     console.log("initState: reseting everything.");
     players = null;
     displayOrder = null;
-    remotePlayers = [];
     hand = null;
     pot = null;
     myAvatar = null;
@@ -229,26 +226,23 @@ function onRenamePlayer(data) {
         }
     }
 
-    for (var i = 0; i < remotePlayers.length; i++) {
-        if (remotePlayers[i].getName() === data.info.old_name) {
-            remotePlayers[i].setName(data.info.new_name);
+    for (var i = 0; i < myAvatar.getRemotePlayers().length; i++) {
+        if (myAvatar.getRemotePlayers()[i].getName() === data.info.old_name) {
+            myAvatar.getRemotePlayers()[i].setName(data.info.new_name);
             break;
         }
     }
     console.log("Players: " + (new Util29().toString(players)));
-    console.log("RemotePlayers: " + (new Util29().toString(remotePlayers)));
+    console.log("RemotePlayers: " +
+        (new Util29().toString(myAvatar.getRemotePlayers())));
 }
 
 function onNewPlayer(data) {
     var player = new Player(data.id, data.name);
-    for (var i = 0; i < remotePlayers.length; i++) {
-        if (remotePlayers[i].equals(player)) {
-            return;
-        }
-    }
-    console.log("New player connected: " + player.toString());
-    remotePlayers.push(player);
-    console.log("All Remote Player: " + (new Util29().toString(remotePlayers)));
+    console.log("New player connected: " + player);
+    myAvatar.addRemotePlayer(player);
+    console.log("All Remote Player: " +
+        (new Util29().toString(myAvatar.getRemotePlayers())));
 }
 
 function onGetHandCommand(data) {
