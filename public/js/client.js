@@ -6,20 +6,22 @@ socket,
 myAvatar,
 // hand of cards
 hand,
-// display order with playing cycle order
-displayOrder,
-// all players
-players,
 // pot with the played cards
 pot;
 
 var all_denoms = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
 var all_suits = ['C','D','S','H'];
+var positions = new Object();
+positions[0] = 0;
+positions[-1] = 1;
+positions[1] = 3;
+positions[-2] = 2;
+positions[2] = 2;
+positions[-3] = 3;
+positions[3] = 1;
 
 function initState() {
     console.log("initState: reseting everything.");
-    players = null;
-    displayOrder = null;
     hand = null;
     pot = null;
     myAvatar = null;
@@ -68,13 +70,13 @@ function trumpEntered() {
 }
 
 function changePlayerName() {
-    var player_name = document.getElementsByName("player_name")[0].value;
-    console.log("Player New Name: " + player_name);
+    var new_name = document.getElementsByName("player_name")[0].value;
+    console.log("Player New Name: " + new_name);
     var old_name = myAvatar.getName();
-    myAvatar.setName(player_name);
+    myAvatar.renamePlayer(old_name, new_name);
     console.log("New Avatar Name: " + myAvatar.getName());
     socket.emit("broadcast", {event: "rename player",
-        info: {old_name: old_name, new_name: player_name}
+        info: {old_name: old_name, new_name: new_name}
     });
 }
 
@@ -131,7 +133,7 @@ function onResetState() {
 }
 
 function onReceiveSocketID(data) {
-    myAvatar = new Player(0, data.id);
+    myAvatar = new Player(data.id, data.id);
 }
 
 function onTrumpReceived(data) {
@@ -150,8 +152,10 @@ function onOutOfTurnPlay(data) {
 }
 
 function onRemotePlayCard(data) {
+    console.log("Remote player " + myAvatar.getPlayerAt(data.turnid) +
+        " played a card");
     pot.addCard(data.card);
-    var pot_index = displayOrder[data.turnid];
+    var pot_index = positions[myAvatar.getTurnID() - data.turnid];
     var arr = stripID(data.card);
     var card_code = cardHTML(arr[0], arr[1]);
     var zIndex = pot.size() - 1;
@@ -173,28 +177,8 @@ function onPlayCard(data) {
 }
 
 function onPlayingCycle(data) {
-    players = new Array();
-    displayOrder = new Array();
     pot = new Pot();
-
-    for (var i = 0; i < data.length; i++) {
-        var player = new Player(data[i].id, data[i].name);
-        players.push(player);
-        if (player.getName() === myAvatar.getName()) {
-            myAvatar.setTurnID(i);
-        }
-    }
-
-    displayOrder[myAvatar.getTurnID()] = 0;
-    var turn = 1;
-    for (var i = (myAvatar.getTurnID() + 1) % data.length;
-         turn < data.length;
-         i = (i + 1) % data.length, turn++) {
-        displayOrder[i] = turn;
-    }
-
-    console.log("Playing order: " + (new Util29().toString(players)));
-    console.log("Display Order: " + displayOrder);
+    myAvatar.setAllPlayers(data);
     console.log("Turn ID = " + myAvatar.getTurnID());
 }
 
@@ -215,34 +199,11 @@ function onReceiveHand(data) {
 function onRenamePlayer(data) {
     console.log("Rename of Player requested: " + data.info.old_name + " -> " +
         data.info.new_name);
-
-    if (players !== null) {
-
-        for (var i = 0; i < players.length; i++) {
-            if (players[i].getName() === data.info.old_name) {
-                players[i].setName(data.info.new_name);
-                break;
-            }
-        }
-    }
-
-    for (var i = 0; i < myAvatar.getRemotePlayers().length; i++) {
-        if (myAvatar.getRemotePlayers()[i].getName() === data.info.old_name) {
-            myAvatar.getRemotePlayers()[i].setName(data.info.new_name);
-            break;
-        }
-    }
-    console.log("Players: " + (new Util29().toString(players)));
-    console.log("RemotePlayers: " +
-        (new Util29().toString(myAvatar.getRemotePlayers())));
+    myAvatar.renamePlayer(data.info.old_name, data.info.new_name);
 }
 
 function onNewPlayer(data) {
-    var player = new Player(data.id, data.name);
-    console.log("New player connected: " + player);
-    myAvatar.addRemotePlayer(player);
-    console.log("All Remote Player: " +
-        (new Util29().toString(myAvatar.getRemotePlayers())));
+    console.log("New player connected: " + data.name);
 }
 
 function onGetHandCommand(data) {

@@ -4,8 +4,8 @@ var Player = function(l_id, l_name) {
     id = l_id,
     name = l_name,
     turnID = -1,
-    // remote players also playing the game
-    remotePlayers = [];
+    // all players
+    allPlayers = [],
     trump = null;
 
     var getID = function() {
@@ -42,24 +42,39 @@ var Player = function(l_id, l_name) {
         return this.turnID;
     };
 
-    var setTurnID = function(turnID) {
-        this.turnID = turnID;
-        return this;
-    };
+    var getPlayerAt = function(i) {
+        if (allPlayers.length === 0 || i < 0 || allPlayers.length <= i) {
+            throw "invalid index provided.";
+        }
+        return allPlayers[i];
+    }
 
-    var getRemotePlayers = function() {
-        return remotePlayers;
-    };
+    var setAllPlayers = function(data) {
+        if (allPlayers.length !== 0) {
+            throw "display order is already computed.";
+        }
 
-    var addRemotePlayer = function(player) {
-        for (var i = 0; i < remotePlayers.length; i++) {
-            if (remotePlayers[i].equals(player)) {
-                return this;
+        for (var i = 0; i < data.length; i++) {
+            allPlayers.push(data[i].name);
+            if (data[i].name === name) {
+                this.turnID = i;
             }
         }
-        remotePlayers.push(player);
         return this;
     };
+
+    var renamePlayer = function(old_name, new_name) {
+        for (var i = 0; i < allPlayers.length; i++) {
+            if (allPlayers[i] === old_name) {
+                allPlayers[i] = new_name;
+                break;
+            }
+        }
+        if (name === old_name) {
+            name = new_name;
+        }
+        return this;
+    }
 
     return {
         getID: getID,
@@ -68,9 +83,9 @@ var Player = function(l_id, l_name) {
         setName: setName,
         getName: getName,
         getTurnID: getTurnID,
-        setTurnID: setTurnID,
-        getRemotePlayers: getRemotePlayers,
-        addRemotePlayer: addRemotePlayer,
+        getPlayerAt: getPlayerAt,
+        setAllPlayers: setAllPlayers,
+        renamePlayer: renamePlayer,
         getTrump: getTrump,
         setTrump: setTrump
     };
