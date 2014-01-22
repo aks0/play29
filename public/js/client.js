@@ -159,6 +159,8 @@ function onRemotePlayCard(data) {
     var zIndex = pot.size() - 1;
     card_code = addAttribute(card_code, "style", "z-index: " + zIndex + "; ");
     document.getElementById("pcard" + pot_index).innerHTML = card_code;
+
+    checkPotWinner();
 }
 
 function onPlayCard(data) {
