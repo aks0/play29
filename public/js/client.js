@@ -65,7 +65,7 @@ function onSocketConnected() {
 
     socket.on("remote played card", onRemotePlayCard);
 
-    socket.on("trump card", onTrumpCard);
+    socket.on("trump received", onTrumpReceived);
 
     socket.on("out of turn", onOutOfTurnPlay);
 
@@ -78,9 +78,9 @@ function onResetState() {
     initState();
 }
 
-function onTrumpCard(data) {
-    console.log("trump card received: " + data.trumpcard);
-    trump = genTrumpCard(data.trumpcard);
+function onTrumpReceived(data) {
+    console.log("trump card received: " + data.trump_token);
+    trump = genTrumpCard(data.trump_token);
 }
 
 function onReceiveSocketID(data) {
@@ -130,11 +130,18 @@ function onPlayCard(data) {
 
 function checkPotWinner() {
     console.log("checking PotWinner, length = " + pot.size());
-    if (pot.size() !== 4) {
+    if (pot.size() !== 4 || trump === null) {
         return;
     }
     var winning_card = pot.getPotWinner(trump);
     console.log("Winning Card: " + winning_card.serialize());
+}
+
+function trumpEntered() {
+    var trump_token = document.getElementsByName("trump")[0].value;
+    console.log("Trump Token: " + trump_token);
+    trump = genTrumpCard(trump_token);
+    socket.emit("trump set", {trump_token: trump_token});
 }
 
 function onPlayingCycle(data) {

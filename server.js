@@ -96,7 +96,16 @@ function onSocketConnection(client) {
 
     // one of the clients has indicated to start the game
     client.on("start game", onStartGame);
+
+    // when one of the players sets a trump
+    client.on("trump set", onTrumpSet);
 };
+
+function onTrumpSet(data) {
+    var arr = data.trump_token.split(":");
+    trump = new TrumpCard(arr[0], arr[1]);
+    this.broadcast.emit("trump received", {trump_token: data.trump_token});
+}
 
 function onStartGame() {
     util.log("StartGame request received. Number of players = "
@@ -106,8 +115,8 @@ function onStartGame() {
     } else {
         broadcastToAll(this, "request hand", {num_cards:8});
     }
-    trump = new TrumpCard('4', 'H');
-    broadcastToAll(this, "trump card", {trumpcard: trump.serialize()});
+//    trump = new TrumpCard('4', 'H');
+//    broadcastToAll(this, "trump card", {trump_token: trump.serialize()});
 }
 
 // broadcasts the event and data to all the connected clients
