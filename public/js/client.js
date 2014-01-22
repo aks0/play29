@@ -34,15 +34,6 @@ var setEventHandlers = function() {
     socket.on("connect", onSocketConnected);
 };
 
-// adds a new attribute to the given card code
-function addAttribute(card_html, attr, value) {
-    var new_code = card_html.replace(
-    'marker_tag=""',
-    attr + '=\"' + value + '\"' + ' marker_tag=""'
-    );
-    return new_code;
-}
-
 function checkPotWinner() {
     var pot = myAvatar.getPot();
     console.log("checking PotWinner, length = " + pot.size());
