@@ -48,6 +48,7 @@ function checkPotWinner() {
     console.log("Pot Points: " + pot.getPoints());
     myAvatar.addPoints(winner_id, pot.getPoints());
     console.log("Player Points: " + myAvatar.getPoints());
+    pot.clear();
 }
 
 /******************************************************************************/

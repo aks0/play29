@@ -33,7 +33,15 @@ var Pot = function() {
     };
 
     var clear = function() {
-        pot = new Array();
+        setTimeout(
+            function(){
+                for (var i = 0; i < 4; i++) {
+                    document.getElementById("pcard" + i).innerHTML = "";
+                }
+                pot = new Array();
+            },
+            3000
+        );
     };
 
     var size = function() {
