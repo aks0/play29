@@ -97,3 +97,10 @@ var Pot = function() {
         clear: clear
     };
 };
+
+// server code
+try {
+    exports.Pot = Pot;
+// client code
+} catch(err) {
+}

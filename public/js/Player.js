@@ -1,9 +1,11 @@
 var
+Pot,
 Hand;
 
 // server code
 try {
     Hand = require("./Hand").Hand;
+    Pot = require("./Pot").Pot;
 // client code
 } catch(err) {
 }
@@ -15,7 +17,10 @@ var Player = function(l_id, l_name) {
     turnID = -1,
     // all players
     allPlayers = [],
-    hand = new Hand(),
+    // hand that the player currently owns
+    hand = null,
+    // pot cards which the player can see
+    pot = null,
     trump = null;
 
     var getID = function() {
@@ -84,11 +89,21 @@ var Player = function(l_id, l_name) {
             name = new_name;
         }
         return this;
-    }
+    };
 
     var getHand = function() {
+        if (hand === null) {
+            hand = new Hand();
+        }
         return hand;
-    }
+    };
+
+    var getPot = function() {
+        if (pot === null) {
+            pot = new Pot();
+        }
+        return pot;
+    };
 
     return {
         getID: getID,
@@ -101,6 +116,7 @@ var Player = function(l_id, l_name) {
         setAllPlayers: setAllPlayers,
         renamePlayer: renamePlayer,
         getHand: getHand,
+        getPot: getPot,
         getTrump: getTrump,
         setTrump: setTrump
     };

@@ -3,9 +3,7 @@ NUM_PLAYERS = 4,
 // Socket connection
 socket,
 // this player's avatar
-myAvatar,
-// pot with the played cards
-pot;
+myAvatar;
 
 var all_denoms = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
 var all_suits = ['C','D','S','H'];
@@ -20,7 +18,6 @@ positions[3] = 1;
 
 function initState() {
     console.log("initState: reseting everything.");
-    pot = null;
     myAvatar = null;
 }
 
@@ -47,6 +44,7 @@ function addAttribute(card_html, attr, value) {
 }
 
 function checkPotWinner() {
+    var pot = myAvatar.getPot();
     console.log("checking PotWinner, length = " + pot.size());
     console.log("trump is " + myAvatar.getTrump());
     if (pot.size() !== 4 || myAvatar.getTrump() === null) {
@@ -149,6 +147,7 @@ function onOutOfTurnPlay(data) {
 }
 
 function onRemotePlayCard(data) {
+    var pot = myAvatar.getPot();
     console.log("Remote player " + myAvatar.getPlayerAt(data.turnid) +
         " played a card");
     pot.addCard(data.card);
@@ -165,6 +164,7 @@ function onPlayCard(data) {
     myAvatar.getHand().remove(card);
 
     var card_node = document.getElementById(data.card);
+    var pot = myAvatar.getPot();
     pot.addCard(data.card);
     card_node.style.zIndex = pot.size() - 1;
     card_node.parentNode.removeChild(card_node);
@@ -174,7 +174,6 @@ function onPlayCard(data) {
 }
 
 function onPlayingCycle(data) {
-    pot = new Pot();
     myAvatar.setAllPlayers(data);
     console.log("Turn ID = " + myAvatar.getTurnID());
 }
