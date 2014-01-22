@@ -4,8 +4,6 @@ NUM_PLAYERS = 4,
 socket,
 // this player's avatar
 myAvatar,
-// hand of cards
-hand,
 // pot with the played cards
 pot;
 
@@ -22,7 +20,6 @@ positions[3] = 1;
 
 function initState() {
     console.log("initState: reseting everything.");
-    hand = null;
     pot = null;
     myAvatar = null;
 }
@@ -165,7 +162,7 @@ function onRemotePlayCard(data) {
 
 function onPlayCard(data) {
     var card = genCard(data.card);
-    hand.remove(card);
+    myAvatar.getHand().remove(card);
 
     var card_node = document.getElementById(data.card);
     pot.addCard(data.card);
@@ -183,15 +180,15 @@ function onPlayingCycle(data) {
 }
 
 function onReceiveHand(data) {
-    hand = new Hand();
+    var hand = myAvatar.getHand().clear();
     for (var i = 0; i < data.length; i++) {
-    hand.add(genCard(data[i]));
+        hand.add(genCard(data[i]));
     }
     console.log("Hand: " + hand.toString());
 
     var hand_cards = "";
     for(var i = 0; i < hand.length(); i++) {
-    hand_cards += cardHTML(hand.get(i).getDenom(), hand.get(i).getSuit());
+        hand_cards += cardHTML(hand.get(i).getDenom(), hand.get(i).getSuit());
     }
     document.getElementById("cards").innerHTML = hand_cards;
 }

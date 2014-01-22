@@ -1,3 +1,12 @@
+var
+Hand;
+
+// server code
+try {
+    Hand = require("./Hand").Hand;
+// client code
+} catch(err) {
+}
 
 var Player = function(l_id, l_name) {
     var
@@ -6,6 +15,7 @@ var Player = function(l_id, l_name) {
     turnID = -1,
     // all players
     allPlayers = [],
+    hand = new Hand(),
     trump = null;
 
     var getID = function() {
@@ -76,6 +86,10 @@ var Player = function(l_id, l_name) {
         return this;
     }
 
+    var getHand = function() {
+        return hand;
+    }
+
     return {
         getID: getID,
         equals: equals,
@@ -86,6 +100,7 @@ var Player = function(l_id, l_name) {
         getPlayerAt: getPlayerAt,
         setAllPlayers: setAllPlayers,
         renamePlayer: renamePlayer,
+        getHand: getHand,
         getTrump: getTrump,
         setTrump: setTrump
     };

@@ -103,7 +103,6 @@ var Deck = function() {
     };
 };
 
-
 // server code
 try {
     exports.Deck = Deck;
