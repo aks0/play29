@@ -141,6 +141,13 @@ var Player = function(l_id, l_name) {
         return this;
     };
 
+    var reset = function() {
+        subRound = 0;
+        gameScores[0].resetRoundPoints();
+        gameScores[1].resetRoundPoints();
+        return this;
+    };
+
     return {
         getID: getID,
         equals: equals,
@@ -158,6 +165,7 @@ var Player = function(l_id, l_name) {
         getPot: getPot,
         getSubRound: getSubRound,
         incrSubRound: incrSubRound,
+        reset: reset,
         getTrump: getTrump,
         setTrump: setTrump
     };

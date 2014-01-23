@@ -56,6 +56,11 @@ var GameScore = function(team_id) { // later change it to team
 
 	var reset = function() {
 		gamePoints = 0;
+		resetRoundPoints();
+		return this;
+	};
+
+	var resetRoundPoints = function() {
 		roundPoints = 0;
 		return this;
 	};
@@ -82,6 +87,7 @@ var GameScore = function(team_id) { // later change it to team
 		reset: reset,
 		addRoundPoints: addRoundPoints,
 		getRoundPoints: getRoundPoints,
+		resetRoundPoints: resetRoundPoints,
 		getGamePoints: getGamePoints,
 		incrBlackSets: incrBlackSets,
 		incrRedSets: incrRedSets,

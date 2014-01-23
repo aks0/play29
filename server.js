@@ -69,8 +69,6 @@ function updatePlayersInfo(client) {
 
     if (players.length === MAX_PLAYERS) {
         broadcastToAll(client, "playing cycle", serializePlayers(players));
-        ctoken = Math.floor(Math.random() * MAX_PLAYERS);
-        util.log("Chance Token = " + ctoken);
     }
 }
 
@@ -87,7 +85,7 @@ function onSocketConnection(client) {
     client.on("select card to play", onCardToPlay);
 
     // one of the clients has indicated to start the game
-    client.on("start game", onStartGame);
+    client.on("start round", onStartRound);
 
     // if one client wants to send some information to all other clients
     client.on("broadcast", onBroadcast);
@@ -101,13 +99,15 @@ function onBroadcast(data) {
     this.broadcast.emit(data.event, {info: data.info});
 }
 
-function onStartGame() {
-    util.log("StartGame request received. Number of players = "
+function onStartRound() {
+    util.log("StartRound request received. Number of players = "
         + players.length);
     if (players.length != 4) {
         broadcastToAll(this, "debug msg", {info: "# players != 4"});
     } else {
         broadcastToAll(this, "request hand", {num_cards:8});
+        ctoken = Math.floor(Math.random() * MAX_PLAYERS);
+        util.log("Chance Token = " + ctoken);
     }
 }
 
@@ -118,7 +118,6 @@ function broadcastToAll(client, event, data) {
 }
 
 function onCardToPlay(data) {
-    util.log("Chance Token: " + ctoken + " data: " + data.turnid);
     if (data.turnid !== ctoken) {
         this.emit("out of turn", {turnid: ctoken});
         return;

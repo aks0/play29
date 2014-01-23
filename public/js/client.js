@@ -34,8 +34,9 @@ var setEventHandlers = function() {
     socket.on("connect", onSocketConnected);
 };
 
-function subRoundCompleted() {
+function subRoundCompleted(winner_id) {
     console.log("SubRound #" + myAvatar.getSubRound() + " is completed.");
+    myAvatar.getPot().clear();
     // last match for the round
     if (myAvatar.getSubRound() === 7) {
         var game_scores = myAvatar.getGameScores();
@@ -44,9 +45,17 @@ function subRoundCompleted() {
         console.log("GamePoints# Team0: " + game_scores[0]);
         console.log("GamePoints# Team1: " + game_scores[1]);
         // TO DO: reset sub-round and sub-round points. start next round
+        myAvatar.reset();
+        // only one person should be able to start the next round.
+        if (myAvatar.getTurnID() === winner_id) {
+            startRound();
+        }
+    } else {
+        myAvatar.incrSubRound();
+        if (myAvatar.getTurnID() === winner_id) {
+            socket.emit("change turn token to", {turnid: winner_id});
+        }
     }
-    myAvatar.incrSubRound();
-    myAvatar.getPot().clear();
 }
 
 function checkPotWinner() {
@@ -65,8 +74,7 @@ function checkPotWinner() {
     var team_points = myAvatar.getPoints();
     console.log("Team 0: " + team_points.team0 + "\tTeam 1: " +
         team_points.team1);
-    socket.emit("change turn token to", {turnid: winner_id});
-    subRoundCompleted();
+    subRoundCompleted(winner_id);
 }
 
 /******************************************************************************/
@@ -90,8 +98,8 @@ function changePlayerName() {
     });
 }
 
-function startGame() {
-    socket.emit("start game");
+function startRound() {
+    socket.emit("start round");
 };
 
 function cardClicked(item){
