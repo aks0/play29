@@ -23,6 +23,7 @@ var Player = function(l_id, l_name) {
     pot = null,
     points = null,
     subRound = 0,
+    teamID = -1,
     trump = null;
 
     var getID = function() {
@@ -31,6 +32,10 @@ var Player = function(l_id, l_name) {
 
     var getName = function() {
         return name;
+    };
+
+    var getTeamID = function() {
+        return teamID;
     };
 
     var toString = function() {
@@ -77,6 +82,10 @@ var Player = function(l_id, l_name) {
                 this.turnID = i;
             }
         }
+        // teamID is set only once
+        if (teamID === -1) {
+            teamID = this.turnID % 2;
+        }
         return this;
     };
 
@@ -119,7 +128,7 @@ var Player = function(l_id, l_name) {
     };
 
     var getPoints = function() {
-        return points;
+        return {team0: points[0] + points[2], team1: points[1] + points[3]};
     };
 
     var getSubRound = function() {
@@ -147,6 +156,7 @@ var Player = function(l_id, l_name) {
         getPot: getPot,
         getSubRound: getSubRound,
         incrSubRound: incrSubRound,
+        getTeamID: getTeamID,
         getTrump: getTrump,
         setTrump: setTrump
     };

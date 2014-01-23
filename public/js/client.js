@@ -58,7 +58,9 @@ function checkPotWinner() {
     console.log("Winner: " + winner_id);
     console.log("Pot Points: " + pot.getPoints());
     myAvatar.addPoints(winner_id, pot.getPoints());
-    console.log("Player Points: " + myAvatar.getPoints());
+    var team_points = myAvatar.getPoints();
+    console.log("Team 0: " + team_points.team0 + "\tTeam 1: " +
+        team_points.team1);
     subRoundCompleted();
 }
 
