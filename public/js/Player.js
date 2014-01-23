@@ -27,6 +27,8 @@ var Player = function(l_id, l_name) {
     subRound = 0,
     teamID = -1,
     gameScores = new Array(),
+    bid = -1,
+    bidding_team = -1,
     trump = null;
 
     var getID = function() {
@@ -145,6 +147,44 @@ var Player = function(l_id, l_name) {
         subRound = 0;
         gameScores[0].resetRoundPoints();
         gameScores[1].resetRoundPoints();
+        bid = -1;
+        bidding_team = -1;
+        return this;
+    };
+
+    var getBid = function() {
+        if (bid === -1) {
+            throw "bid for the round not set.";
+        }
+        return bid;
+    };
+
+    var setBid = function(bid_value) {
+        if (bid !== -1) {
+            throw "bid is already set, you cannot reset bid.";
+        }
+        if (bid_value < 17 || bid_value >= 29) {
+            throw "Invalid bid value, bid \in [17, 29].";
+        }
+        bid = bid_value;
+        return this;
+    };
+
+    var getBiddingTeam = function() {
+        if (bidding_team === -1) {
+            throw "bidding_team for the round not set.";
+        }
+        return bidding_team;
+    };
+
+    var setBiddingTeam = function(bteam) {
+        if (bidding_team !== -1) {
+            throw "bidding_team is already set, you cannot reset.";
+        }
+        if (bteam != 0 && bteam != 1) {
+            throw "Invalid bidding_team set, bidding_team is either 0 or 1.";
+        }
+        bidding_team = bteam;
         return this;
     };
 
@@ -166,6 +206,10 @@ var Player = function(l_id, l_name) {
         getSubRound: getSubRound,
         incrSubRound: incrSubRound,
         reset: reset,
+        getBid: getBid,
+        setBid: setBid,
+        getBiddingTeam: getBiddingTeam,
+        setBiddingTeam: setBiddingTeam,
         getTrump: getTrump,
         setTrump: setTrump
     };

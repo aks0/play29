@@ -40,9 +40,6 @@ var Pot = function() {
                 }
                 pot = new Array();
             },
-            // TO DO: Show the current pot as last hand on the side. That way
-            // the reduced pot cards vanishing time won't affect and larger
-            // times would not cause errors.
             100
         );
     };

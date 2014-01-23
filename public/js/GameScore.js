@@ -4,7 +4,6 @@ var GameScore = function(team_id) { // later change it to team
 	teamID = team_id,
 	// current round points which are accumulating
 	roundPoints = 0,
-	// TO DO: display game points in terms of cards
 	// current points in terms of the 6-cards [-6, 6]
 	gamePoints = 0,
 	// number of red sets on this team due to the other team

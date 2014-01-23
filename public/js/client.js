@@ -40,11 +40,13 @@ function subRoundCompleted(winner_id) {
     // last match for the round
     if (myAvatar.getSubRound() === 7) {
         var game_scores = myAvatar.getGameScores();
-        // TO DO: decide the bidder of the game. Current default team 0.
-        game_scores[0].updateScores(game_scores[1], 17);
+        var bidding_team = myAvatar.getBiddingTeam();
+        var other_team = (bidding_team + 1) % 2
+        var bid = myAvatar.getBid();
+        game_scores[bidding_team].updateScores(game_scores[other_team], bid);
+        
         console.log("GamePoints# Team0: " + game_scores[0]);
         console.log("GamePoints# Team1: " + game_scores[1]);
-        // TO DO: reset sub-round and sub-round points. start next round
         myAvatar.reset();
         // only one person should be able to start the next round.
         if (myAvatar.getTurnID() === winner_id) {
@@ -82,17 +84,15 @@ function checkPotWinner() {
 function trumpEntered() {
     var trump_token = document.getElementsByName("trump")[0].value;
     console.log("Trump Token: " + trump_token);
-    var trump = genTrumpCard(trump_token);
-    myAvatar.setTrump(trump);
-    socket.emit("broadcast", {event: "trump received", info: trump_token});
+    socket.emit("broadcast", {event: "trump received",
+        info: {trump: trump_token}
+    });
 }
 
 function changePlayerName() {
     var new_name = document.getElementsByName("player_name")[0].value;
     console.log("Player New Name: " + new_name);
     var old_name = myAvatar.getName();
-    myAvatar.renamePlayer(old_name, new_name);
-    console.log("New Avatar Name: " + myAvatar.getName());
     socket.emit("broadcast", {event: "rename player",
         info: {old_name: old_name, new_name: new_name}
     });
@@ -114,6 +114,14 @@ function cardClicked(item){
 
     socket.emit("select card to play",
         {turnid: myAvatar.getTurnID(), card: id_token});
+}
+
+function enterBid() {
+    var bid = document.getElementsByName("bid")[0].value;
+    console.log("Bid Entered: " + bid);
+    socket.emit("broadcast", {event:"bid",
+        info: {bid: bid, player: myAvatar.getName()}
+    });
 }
 
 /******************************************************************************/
@@ -144,7 +152,24 @@ function onSocketConnected() {
     socket.on("request hand", onGetHandCommand);
 
     socket.on("debug msg", onDebugMsg);
+
+    socket.on("bid", onBid);
 };
+
+function onBid(data) {
+    console.log("data.bid: " + data.bid);
+    var bid = parseInt(data.bid);
+    console.log("Bid: " + bid + " Bidding-Player: " + data.player);
+    var bidding_team = -1;
+    for (var i = 0; i < 4; i++) {
+        if (myAvatar.getPlayerAt(i) === data.player) {
+            bidding_team = i % 2;
+            break;
+        }
+    }
+    myAvatar.setBid(bid);
+    myAvatar.setBiddingTeam(bidding_team);
+}
 
 function onResetState() {
     initState();
@@ -155,14 +180,14 @@ function onReceiveSocketID(data) {
 }
 
 function onTrumpReceived(data) {
-    console.log("trump card received: " + data.info);
-    var trump = genTrumpCard(data.info);
+    console.log("trump card received: " + data.trump);
+    var trump = genTrumpCard(data.trump);
     myAvatar.setTrump(trump);
 }
 
 // adds debugging information to the console which is received from the server.
 function onDebugMsg(data) {
-    console.log("DEBUG: " + data.info);
+    console.log("DEBUG: " + data.msg);
 }
 
 function onOutOfTurnPlay(data) {
@@ -219,9 +244,9 @@ function onReceiveHand(data) {
 }
 
 function onRenamePlayer(data) {
-    console.log("Rename of Player requested: " + data.info.old_name + " -> " +
-        data.info.new_name);
-    myAvatar.renamePlayer(data.info.old_name, data.info.new_name);
+    console.log("Rename of Player requested: " + data.old_name + " -> " +
+        data.new_name);
+    myAvatar.renamePlayer(data.old_name, data.new_name);
 }
 
 function onNewPlayer(data) {

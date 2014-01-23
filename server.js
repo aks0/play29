@@ -87,23 +87,26 @@ function onSocketConnection(client) {
     // one of the clients has indicated to start the game
     client.on("start round", onStartRound);
 
-    // if one client wants to send some information to all other clients
+    // if one client wants to send some information to all clients
+    // including itself
     client.on("broadcast", onBroadcast);
 
     // reassign turn-token to the winning player
     client.on("change turn token to", onChangeTurnToken);
 };
 
+// broadcasts to all the clients
 function onBroadcast(data) {
     console.log("broadcast: event#" + data.event + " info#" + data.info);
-    this.broadcast.emit(data.event, {info: data.info});
+    this.broadcast.emit(data.event, data.info);
+    this.emit(data.event, data.info);
 }
 
 function onStartRound() {
     util.log("StartRound request received. Number of players = "
         + players.length);
     if (players.length != 4) {
-        broadcastToAll(this, "debug msg", {info: "# players != 4"});
+        broadcastToAll(this, "debug msg", {msg: "# players != 4"});
     } else {
         broadcastToAll(this, "request hand", {num_cards:8});
         ctoken = Math.floor(Math.random() * MAX_PLAYERS);
