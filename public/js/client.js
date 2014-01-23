@@ -65,6 +65,7 @@ function checkPotWinner() {
     var team_points = myAvatar.getPoints();
     console.log("Team 0: " + team_points.team0 + "\tTeam 1: " +
         team_points.team1);
+    socket.emit("change turn token to", {turnid: winner_id});
     subRoundCompleted();
 }
 

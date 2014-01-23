@@ -91,6 +91,9 @@ function onSocketConnection(client) {
 
     // if one client wants to send some information to all other clients
     client.on("broadcast", onBroadcast);
+
+    // reassign turn-token to the winning player
+    client.on("change turn token to", onChangeTurnToken);
 };
 
 function onBroadcast(data) {
@@ -125,6 +128,11 @@ function onCardToPlay(data) {
             {turnid: data.turnid, card: data.card});
     this.emit("play card", {card: data.card});
     ctoken = (ctoken + 1) % MAX_PLAYERS;
+}
+
+function onChangeTurnToken(data) {
+    util.log("Turn Token changed to " + data.turnid);
+    ctoken = data.turnid;
 }
 
 function serializePlayer(player) {
