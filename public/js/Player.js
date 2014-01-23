@@ -33,6 +33,8 @@ var Player = function(l_id, l_name) {
     bid = -1,
     bidding_team = -1,
     isAlphaPartnerSet = false,
+    isBidSet = false,
+    isTrumpSet = false,
     trump = null;
 
     var getID = function() {
@@ -61,8 +63,18 @@ var Player = function(l_id, l_name) {
     };
 
     var setTrump = function(trump) {
+        if (!isBidSet) {
+            console.log("You must first finish bidding.");
+            return this;
+        }
         this.trump = trump;
+        console.log("Trump setting successful");
+        isTrumpSet = true;
         return this;
+    };
+
+    var getIsTrumpSet = function() {
+        return isTrumpSet;
     };
 
     var getTurnID = function() {
@@ -187,11 +199,13 @@ var Player = function(l_id, l_name) {
         gameScores[1].resetRoundPoints();
         bid = -1;
         bidding_team = -1;
+        isBidSet = false;
+        isTrumpSet = false;
         return this;
     };
 
     var getBid = function() {
-        if (bid === -1) {
+        if (!isBidSet) {
             throw "bid for the round not set.";
         }
         return bid;
@@ -202,7 +216,7 @@ var Player = function(l_id, l_name) {
             console.log("Please select team first.");
             return this;
         }
-        if (bid !== -1) {
+        if (isBidSet) {
             throw "bid is already set, you cannot reset bid.";
         } else if (bid_value < 17 || bid_value >= 29) {
             throw "Invalid bid value, bid \in [17, 29].";
@@ -212,11 +226,12 @@ var Player = function(l_id, l_name) {
         bidding_team = bteam;
         bid = bid_value;
         console.log("Bid successful!");
+        isBidSet = true;
         return this;
     };
 
     var getBiddingTeam = function() {
-        if (bidding_team === -1) {
+        if (!isBidSet) {
             throw "bidding_team for the round not set.";
         }
         return bidding_team;
@@ -244,6 +259,7 @@ var Player = function(l_id, l_name) {
         getBid: getBid,
         setBid: setBid,
         getBiddingTeam: getBiddingTeam,
+        getIsTrumpSet: getIsTrumpSet,
         getTrump: getTrump,
         setTrump: setTrump
     };

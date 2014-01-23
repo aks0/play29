@@ -100,6 +100,10 @@ function changePlayerName() {
 }
 
 function startRound() {
+    if (!myAvatar.getIsTrumpSet()) {
+        console.log("Please set trump first.");
+        return;
+    }
     socket.emit("start round");
 };
 
