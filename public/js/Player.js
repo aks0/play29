@@ -1,15 +1,18 @@
 var
 Pot,
 GameScore,
+util29,
 Hand;
 
 // server code
 try {
     Hand = require("./Hand").Hand;
     Pot = require("./Pot").Pot;
+    util29 = require("./Util29").Util29();
     GameScore = require("./GameScore").GameScore;
 // client code
 } catch(err) {
+    util29 = new Util29();
 }
 
 var Player = function(l_id, l_name) {
@@ -29,6 +32,7 @@ var Player = function(l_id, l_name) {
     gameScores = new Array(),
     bid = -1,
     bidding_team = -1,
+    isAlphaPartnerSet = false,
     trump = null;
 
     var getID = function() {
@@ -62,7 +66,10 @@ var Player = function(l_id, l_name) {
     };
 
     var getTurnID = function() {
-        return this.turnID;
+        if (turnID === -1) {
+            computeTurnID();
+        }
+        return turnID;
     };
 
     var getPlayerAt = function(i) {
@@ -72,23 +79,54 @@ var Player = function(l_id, l_name) {
         return allPlayers[i];
     }
 
+    var initGameScores = function() {
+        gameScores.push(new GameScore(0));
+        gameScores.push(new GameScore(1));
+    };
+
+    var computeTurnID = function() {
+        for (var i = 0; i < allPlayers.length; i++) {
+            if (allPlayers[i] === name) {
+                turnID = i;
+            }
+        }
+        teamID = turnID % 2;
+    }
+
+    var setAlphaPartner = function(alpha_partner) {
+        if (isAlphaPartnerSet) {
+            throw "alpha's partner is already set; cannot set again!";
+        }
+
+        console.log("allPlayers: " + util29.toString(allPlayers));
+        var alpha_partner_index = -1;
+        for (var i = 0; i < allPlayers.length; i++) {
+            if (allPlayers[i] === alpha_partner) {
+                alpha_partner_index = i;
+                break;
+            }
+        }
+
+        if (alpha_partner_index === 1) {
+            util29.swap(allPlayers, 1, 2);
+        } else if (alpha_partner_index === 3) {
+            util29.swap(allPlayers, 2, 3);
+        } else if (alpha_partner_index !== 2) {
+            throw "Invalid alpha's partner is chosen!";
+        }
+        computeTurnID();
+        isAlphaPartnerSet = true;
+    }
+
     var setAllPlayers = function(data) {
         if (allPlayers.length !== 0) {
             throw "display order is already computed.";
         }
-
         for (var i = 0; i < data.length; i++) {
             allPlayers.push(data[i].name);
-            if (data[i].name === name) {
-                this.turnID = i;
-            }
         }
-        // teamID is set only once
-        if (teamID === -1) {
-            teamID = this.turnID % 2;
-        }
-        gameScores.push(new GameScore(0));
-        gameScores.push(new GameScore(1));
+        computeTurnID();
+        initGameScores();
         return this;
     };
 
@@ -195,6 +233,7 @@ var Player = function(l_id, l_name) {
         setName: setName,
         getName: getName,
         getTurnID: getTurnID,
+        setAlphaPartner: setAlphaPartner,
         getPlayerAt: getPlayerAt,
         setAllPlayers: setAllPlayers,
         renamePlayer: renamePlayer,

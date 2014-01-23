@@ -95,14 +95,7 @@ function onSocketConnection(client) {
 
     // reassign turn-token to the winning player
     client.on("change turn token to", onChangeTurnToken);
-
-    // alpha's partner entered by user
-    //client.on("alpha partner", onAlphaPartner);
 };
-
-// function onAlphaPartner(data) {
-
-// }
 
 // broadcasts to all the clients
 function onBroadcast(data) {

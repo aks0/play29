@@ -71,6 +71,7 @@ function checkPotWinner() {
     console.log("Winning Card: " + winning_card.serialize());
     var winner_id = pot.cardPlayedBy(winning_card.serialize());
     console.log("Winner: " + winner_id);
+    console.log("Winner Player: " + myAvatar.getPlayerAt(winner_id));
     console.log("Pot Points: " + pot.getPoints());
     myAvatar.addPoints(winner_id, pot.getPoints());
     var team_points = myAvatar.getPoints();
@@ -125,9 +126,11 @@ function enterBid() {
 }
 
 function connectAlpha() {
-    // var alpha_parter = document.getElementsByName("alpha_parter")[0].value;
-    // console.log("alpha_parter: " + alpha_parter);
-    // socket.emit("alpha partner", {partner: alpha_parter});
+    var alpha_parter = document.getElementsByName("alpha_parter")[0].value;
+    console.log("alpha_parter: " + alpha_parter);
+    socket.emit("broadcast", {event: "alpha partner",
+        info: {alpha_partner: alpha_parter}
+    });
 }
 
 /******************************************************************************/
@@ -160,7 +163,14 @@ function onSocketConnected() {
     socket.on("debug msg", onDebugMsg);
 
     socket.on("bid", onBid);
+
+    socket.on("alpha partner", onAlphaPartner);
 };
+
+function onAlphaPartner(data) {
+    console.log("alpha_partner received: " + data.alpha_partner);
+    myAvatar.setAlphaPartner(data.alpha_partner.trim());
+}
 
 function onBid(data) {
     console.log("data.bid: " + data.bid);
