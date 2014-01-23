@@ -111,7 +111,6 @@ function onStartRound() {
         broadcastToAll(this, "debug msg", {msg: "# players != 4"});
     } else {
         broadcastToAll(this, "request hand", {num_cards:8});
-        ctoken = Math.floor(Math.random() * MAX_PLAYERS);
         util.log("Chance Token = " + ctoken);
     }
 }

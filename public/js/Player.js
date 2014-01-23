@@ -246,6 +246,10 @@ var Player = function(l_id, l_name) {
         return bidding_player;
     };
 
+    var getIsBidSet = function() {
+        return isBidSet;
+    };
+
     return {
         getID: getID,
         equals: equals,
@@ -269,6 +273,7 @@ var Player = function(l_id, l_name) {
         setBid: setBid,
         getBiddingTeam: getBiddingTeam,
         getBiddingPlayer: getBiddingPlayer,
+        getIsBidSet: getIsBidSet,
         getIsTrumpSet: getIsTrumpSet,
         getTrump: getTrump,
         setTrump: setTrump

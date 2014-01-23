@@ -184,6 +184,9 @@ function onAlphaPartner(data) {
 function onBid(data) {
     console.log("Bid: " + data.bid + " Bidding-Player: " + data.player);
     myAvatar.setBid(parseInt(data.bid), data.player);
+    if (myAvatar.getIsBidSet() && myAvatar.getName() === data.player) {
+        socket.emit("change turn token to", {turnid: myAvatar.getTurnID()});
+    }
 }
 
 function onResetState() {
