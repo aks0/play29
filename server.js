@@ -19,6 +19,7 @@ PORT = 8070,
 MAX_PLAYERS = 4, // maximum number of players that can play
 socket,  //Socket controller
 deck,    // global deck for the game for each round
+pseudonames = ['phi', 'gamma', 'beta', 'alpha'],
 players; // Array of connected players
 
 function init() {
@@ -49,8 +50,9 @@ var setEventHandlers = function () {
 };
 
 function updatePlayersInfo(client) {
-    client.emit("receive socket id", {id: client.id});
-    var new_player = new Player(client.id, client.id);
+    var new_player = new Player(client.id, pseudonames.pop());
+    client.emit("receive avatar",
+        {id: new_player.getID(), name: new_player.getName()});
 
     // Broadcast new player to connected socket clients
     client.broadcast.emit("new player", {id: new_player.getID(),
@@ -93,7 +95,14 @@ function onSocketConnection(client) {
 
     // reassign turn-token to the winning player
     client.on("change turn token to", onChangeTurnToken);
+
+    // alpha's partner entered by user
+    //client.on("alpha partner", onAlphaPartner);
 };
+
+// function onAlphaPartner(data) {
+
+// }
 
 // broadcasts to all the clients
 function onBroadcast(data) {

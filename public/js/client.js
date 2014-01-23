@@ -124,6 +124,12 @@ function enterBid() {
     });
 }
 
+function connectAlpha() {
+    // var alpha_parter = document.getElementsByName("alpha_parter")[0].value;
+    // console.log("alpha_parter: " + alpha_parter);
+    // socket.emit("alpha partner", {partner: alpha_parter});
+}
+
 /******************************************************************************/
 // Event-handlers for events triggered from server or other clients 
 function onSocketConnected() {
@@ -137,7 +143,7 @@ function onSocketConnected() {
 
     socket.on("rename player", onRenamePlayer);
 
-    socket.on("receive socket id", onReceiveSocketID);
+    socket.on("receive avatar", onReceiveAvatar);
 
     socket.on("playing cycle", onPlayingCycle);
 
@@ -175,8 +181,9 @@ function onResetState() {
     initState();
 }
 
-function onReceiveSocketID(data) {
-    myAvatar = new Player(data.id, data.id);
+function onReceiveAvatar(data) {
+    myAvatar = new Player(data.id, data.name);
+    console.log("Hi " + myAvatar.getName() + "!");
 }
 
 function onTrumpReceived(data) {
