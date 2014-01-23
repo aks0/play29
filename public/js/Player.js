@@ -197,14 +197,21 @@ var Player = function(l_id, l_name) {
         return bid;
     };
 
-    var setBid = function(bid_value) {
+    var setBid = function(bid_value, bteam) {
+        if (!isAlphaPartnerSet) {
+            console.log("Please select team first.");
+            return this;
+        }
         if (bid !== -1) {
             throw "bid is already set, you cannot reset bid.";
-        }
-        if (bid_value < 17 || bid_value >= 29) {
+        } else if (bid_value < 17 || bid_value >= 29) {
             throw "Invalid bid value, bid \in [17, 29].";
+        } else if (bteam != 0 && bteam != 1) {
+            throw "Invalid bidding_team set, bidding_team is either 0 or 1.";
         }
+        bidding_team = bteam;
         bid = bid_value;
+        console.log("Bid successful!");
         return this;
     };
 
@@ -213,17 +220,6 @@ var Player = function(l_id, l_name) {
             throw "bidding_team for the round not set.";
         }
         return bidding_team;
-    };
-
-    var setBiddingTeam = function(bteam) {
-        if (bidding_team !== -1) {
-            throw "bidding_team is already set, you cannot reset.";
-        }
-        if (bteam != 0 && bteam != 1) {
-            throw "Invalid bidding_team set, bidding_team is either 0 or 1.";
-        }
-        bidding_team = bteam;
-        return this;
     };
 
     return {
@@ -248,7 +244,6 @@ var Player = function(l_id, l_name) {
         getBid: getBid,
         setBid: setBid,
         getBiddingTeam: getBiddingTeam,
-        setBiddingTeam: setBiddingTeam,
         getTrump: getTrump,
         setTrump: setTrump
     };

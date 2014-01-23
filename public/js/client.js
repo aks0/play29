@@ -183,8 +183,7 @@ function onBid(data) {
             break;
         }
     }
-    myAvatar.setBid(bid);
-    myAvatar.setBiddingTeam(bidding_team);
+    myAvatar.setBid(bid, bidding_team);
 }
 
 function onResetState() {
