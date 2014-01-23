@@ -1,11 +1,13 @@
 var
 Pot,
+GameScore,
 Hand;
 
 // server code
 try {
     Hand = require("./Hand").Hand;
     Pot = require("./Pot").Pot;
+    GameScore = require("./GameScore").GameScore;
 // client code
 } catch(err) {
 }
@@ -24,6 +26,7 @@ var Player = function(l_id, l_name) {
     points = null,
     subRound = 0,
     teamID = -1,
+    gameScores = new Array(),
     trump = null;
 
     var getID = function() {
@@ -32,10 +35,6 @@ var Player = function(l_id, l_name) {
 
     var getName = function() {
         return name;
-    };
-
-    var getTeamID = function() {
-        return teamID;
     };
 
     var toString = function() {
@@ -86,6 +85,8 @@ var Player = function(l_id, l_name) {
         if (teamID === -1) {
             teamID = this.turnID % 2;
         }
+        gameScores.push(new GameScore(0));
+        gameScores.push(new GameScore(1));
         return this;
     };
 
@@ -116,19 +117,19 @@ var Player = function(l_id, l_name) {
         return pot;
     };
 
-    var addPoints = function(player_turn_id, incr) {
-        if (points === null) {
-            points = new Array();
-            for (var i = 0; i < 4; i++) {
-                points.push(0);
-            }
-        }
-        points[player_turn_id] += incr;
+    var addPoints = function(player_turn_id, increment) {
+        var team_id = player_turn_id % 2;
+        gameScores[team_id].addRoundPoints(increment);
         return this;
     };
 
     var getPoints = function() {
-        return {team0: points[0] + points[2], team1: points[1] + points[3]};
+        return {team0: gameScores[0].getRoundPoints(),
+                team1: gameScores[1].getRoundPoints()};
+    };
+
+    var getGameScores = function() {
+        return gameScores;
     };
 
     var getSubRound = function() {
@@ -151,12 +152,12 @@ var Player = function(l_id, l_name) {
         setAllPlayers: setAllPlayers,
         renamePlayer: renamePlayer,
         getHand: getHand,
+        getGameScores: getGameScores,
         addPoints: addPoints,
         getPoints: getPoints,
         getPot: getPot,
         getSubRound: getSubRound,
         incrSubRound: incrSubRound,
-        getTeamID: getTeamID,
         getTrump: getTrump,
         setTrump: setTrump
     };

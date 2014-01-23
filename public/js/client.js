@@ -38,8 +38,12 @@ function subRoundCompleted() {
     console.log("SubRound #" + myAvatar.getSubRound() + " is completed.");
     // last match for the round
     if (myAvatar.getSubRound() === 7) {
-        // compute GameScore in terms of the 6-cards
-        // reset sub-round and sub-round points.
+        var game_scores = myAvatar.getGameScores();
+        // TO DO: decide the bidder of the game. Current default team 0.
+        game_scores[0].updateScores(game_scores[1], 17);
+        console.log("GamePoints# Team0: " + game_scores[0]);
+        console.log("GamePoints# Team1: " + game_scores[1]);
+        // TO DO: reset sub-round and sub-round points. start next round
     }
     myAvatar.incrSubRound();
     myAvatar.getPot().clear();
