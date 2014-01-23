@@ -32,6 +32,7 @@ var Player = function(l_id, l_name) {
     gameScores = new Array(),
     bid = -1,
     bidding_team = -1,
+    bidding_player = null,
     isAlphaPartnerSet = false,
     isBidSet = false,
     isTrumpSet = false,
@@ -63,6 +64,10 @@ var Player = function(l_id, l_name) {
     };
 
     var setTrump = function(trump) {
+        if (isTrumpSet) {
+            console.log("Trump is already set. You cannot set trump again.");
+            return this;
+        }
         if (!isBidSet) {
             console.log("You must first finish bidding.");
             return this;
@@ -199,19 +204,17 @@ var Player = function(l_id, l_name) {
         gameScores[1].resetRoundPoints();
         bid = -1;
         bidding_team = -1;
+        bidding_player = null;
         isBidSet = false;
         isTrumpSet = false;
         return this;
     };
 
     var getBid = function() {
-        if (!isBidSet) {
-            throw "bid for the round not set.";
-        }
         return bid;
     };
 
-    var setBid = function(bid_value, bteam) {
+    var setBid = function(bid_value, bplayer) {
         if (!isAlphaPartnerSet) {
             console.log("Please select team first.");
             return this;
@@ -220,21 +223,27 @@ var Player = function(l_id, l_name) {
             throw "bid is already set, you cannot reset bid.";
         } else if (bid_value < 17 || bid_value >= 29) {
             throw "Invalid bid value, bid \in [17, 29].";
-        } else if (bteam != 0 && bteam != 1) {
-            throw "Invalid bidding_team set, bidding_team is either 0 or 1.";
         }
-        bidding_team = bteam;
+
         bid = bid_value;
+        for (var i = 0; i < 4; i++) {
+            if (allPlayers[i] === bplayer) {
+                bidding_team = i % 2;
+                bidding_player = bplayer;
+                break;
+            }
+        }
         console.log("Bid successful!");
         isBidSet = true;
         return this;
     };
 
     var getBiddingTeam = function() {
-        if (!isBidSet) {
-            throw "bidding_team for the round not set.";
-        }
         return bidding_team;
+    };
+
+    var getBiddingPlayer = function() {
+        return bidding_player;
     };
 
     return {
@@ -259,6 +268,7 @@ var Player = function(l_id, l_name) {
         getBid: getBid,
         setBid: setBid,
         getBiddingTeam: getBiddingTeam,
+        getBiddingPlayer: getBiddingPlayer,
         getIsTrumpSet: getIsTrumpSet,
         getTrump: getTrump,
         setTrump: setTrump

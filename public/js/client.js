@@ -83,6 +83,11 @@ function checkPotWinner() {
 /******************************************************************************/
 // Input from the index.html form page
 function trumpEntered() {
+    if (myAvatar.getName() !== myAvatar.getBiddingPlayer()) {
+        console.log("Only the bid winner " + myAvatar.getBiddingPlayer() +
+            " can set the trump.");
+        return;
+    }
     var trump_token = document.getElementsByName("trump")[0].value;
     console.log("Trump Token: " + trump_token);
     socket.emit("broadcast", {event: "trump received",
@@ -177,17 +182,8 @@ function onAlphaPartner(data) {
 }
 
 function onBid(data) {
-    console.log("data.bid: " + data.bid);
-    var bid = parseInt(data.bid);
-    console.log("Bid: " + bid + " Bidding-Player: " + data.player);
-    var bidding_team = -1;
-    for (var i = 0; i < 4; i++) {
-        if (myAvatar.getPlayerAt(i) === data.player) {
-            bidding_team = i % 2;
-            break;
-        }
-    }
-    myAvatar.setBid(bid, bidding_team);
+    console.log("Bid: " + data.bid + " Bidding-Player: " + data.player);
+    myAvatar.setBid(parseInt(data.bid), data.player);
 }
 
 function onResetState() {
