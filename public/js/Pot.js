@@ -1,11 +1,11 @@
 var
 Card,
-TrumpCard;
+Trump;
 
 // server code
 try {
     Card = require("./Card").Card;
-    TrumpCard = require("./TrumpCard").TrumpCard;
+    Trump = require("./Trump").Trump;
 // client code
 } catch(err) {
 }

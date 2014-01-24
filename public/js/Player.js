@@ -64,10 +64,6 @@ var Player = function(l_id, l_name) {
     };
 
     var setTrump = function(trump) {
-        if (isTrumpSet) {
-            console.log("Trump is already set. You cannot set trump again.");
-            return this;
-        }
         if (!bid.isSet()) {
             console.log("You must first finish bidding.");
             return this;

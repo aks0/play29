@@ -8,26 +8,26 @@ try {
 } catch(err) {
 }
 
-var TrumpCard = function(denom, suit) {
-    console.log("setting TrumpCard: " + denom + ":" + suit);
+var Trump = function(denom, suit) {
+    console.log("setting Trump: " + denom + ":" + suit);
     if (denom !== '2' && denom !== '3' && denom !== '4' && denom !== '5') {
         throw "Invalid trump is set!";
     }
 
     var
-    trumpCard = new Card(denom, suit),
+    trump = new Card(denom, suit),
     // by default trump is closed.
     isTrumpOpen = true;
 
     var isReverse = function() {
-        if (trumpCard.getDenom() === '3') {
+        if (trump.getDenom() === '3') {
             return true;
         }
         return false;
     };
 
     var isNoTrump = function() {
-        if (trumpCard.getDenom() === '2') {
+        if (trump.getDenom() === '2') {
             return true;
         }
         return false;
@@ -46,6 +46,10 @@ var TrumpCard = function(denom, suit) {
         return isTrumpOpen;
     };
 
+    var clear = function() {
+        
+    };
+
     return {
         isReverse: isReverse,
         isOpen: isOpen,
@@ -53,27 +57,27 @@ var TrumpCard = function(denom, suit) {
         isNoTrump: isNoTrump,
         isSuitTrump: isSuitTrump,
         // card functions
-        getDenom: trumpCard.getDenom,
-        getSuit: trumpCard.getSuit,
-        serialize: trumpCard.serialize,
-        toString: trumpCard.toString
+        getDenom: trump.getDenom,
+        getSuit: trump.getSuit,
+        serialize: trump.serialize,
+        toString: trump.toString
     };
 };
 
 // server code
 try {
-    exports.TrumpCard = TrumpCard;
+    exports.Trump = Trump;
 // client code
 } catch(err) {
 }
 
 /**
- * Factory method for creating a new TrumpCard from String "denom:suit"
+ * Factory method for creating a new Trump from String "denom:suit"
  */
-function genTrumpCard(str) {
+function genTrump(str) {
     var arr = stripID(str);
     if (arr === null) {
         return null;
     }
-    return new TrumpCard(arr[0], arr[1]);
+    return new Trump(arr[0], arr[1]);
 }

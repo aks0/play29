@@ -236,7 +236,12 @@ function onReceiveAvatar(data) {
 
 function onTrumpReceived(data) {
     console.log("trump card received: " + data.trump);
-    var trump = genTrumpCard(data.trump);
+    if (myAvatar.getIsTrumpSet()) {
+        console.log("Trump is already set. You cannot set trump again.");
+        return;
+    }
+        
+    var trump = genTrump(data.trump);
     myAvatar.setTrump(trump);
     if (myAvatar.getIsTrumpSet() &&
         myAvatar.getName() === myAvatar.getBid().getPlayer()) {
