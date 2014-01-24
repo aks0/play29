@@ -138,7 +138,7 @@ function enterBid() {
     if (!myAvatar.getIsRoundStarted()) {
         console.log("Please start the round first.");
         return;
-    } else if (bid.isSet()) {
+    } else if (!bid.isEmpty()) {
         console.log("bid is already set, you cannot reset bid.");
         return;
     } else if (bid_value < 17 || bid_value > 29) {

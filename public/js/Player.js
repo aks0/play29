@@ -64,7 +64,7 @@ var Player = function(l_id, l_name) {
     };
 
     var setTrump = function(trump) {
-        if (!bid.isSet()) {
+        if (bid.isEmpty()) {
             console.log("You must first finish bidding.");
             return this;
         }

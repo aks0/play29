@@ -17,8 +17,8 @@ var Bid = function() {
 		return this;
 	};
 
-	var isSet = function() {
-		return bid !== null;
+	var isEmpty = function() {
+		return bid === null;
 	};
 
 	var getTeam = function() {
@@ -49,7 +49,7 @@ var Bid = function() {
 	return {
 		get: get,
 		set: set,
-		isSet: isSet,
+		isEmpty: isEmpty,
 		getTeam: getTeam,
 		setTeam: setTeam,
 		getPlayer: getPlayer,
