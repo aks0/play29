@@ -16,6 +16,9 @@ positions[2] = 2;
 positions[-3] = 3;
 positions[3] = 1;
 
+var
+CARDS_TO_DRAW = 4;
+
 function initState() {
     console.log("initState: reseting everything.");
     myAvatar = null;
@@ -50,7 +53,7 @@ function subRoundCompleted(winner_id) {
         myAvatar.reset();
         // only one person should be able to start the next round.
         if (myAvatar.getTurnID() === winner_id) {
-            startRound();
+            //startRound();
         }
     } else {
         myAvatar.incrSubRound();
@@ -105,11 +108,11 @@ function changePlayerName() {
 }
 
 function startRound() {
-    if (!myAvatar.getIsTrumpSet()) {
-        console.log("Please set trump first.");
-        return;
+    myAvatar.startRound();
+    if (myAvatar.getIsRoundStarted()) {
+        console.log("sending start round request to server.");
+        socket.emit("start round");
     }
-    socket.emit("start round");
 };
 
 function cardClicked(item){
@@ -119,6 +122,11 @@ function cardClicked(item){
     // the pot cards are un-clickable
     if ($(item.parentNode).attr("id").indexOf("pcard") !== -1) {
         console.log("No use clicking a pot card");
+        return;
+    }
+
+    if (!myAvatar.getIsTrumpSet()) {
+        console.log("The trump is not yet set. Poke the bidder!");
         return;
     }
 
@@ -174,7 +182,14 @@ function onSocketConnected() {
     socket.on("bid", onBid);
 
     socket.on("alpha partner", onAlphaPartner);
+
+    socket.on("start round", onStartRound);
 };
+
+function onStartRound() {
+    console.log("starting round.");
+    myAvatar.startRound();
+}
 
 function onAlphaPartner(data) {
     console.log("alpha_partner received: " + data.alpha_partner);
@@ -184,8 +199,12 @@ function onAlphaPartner(data) {
 function onBid(data) {
     console.log("Bid: " + data.bid + " Bidding-Player: " + data.player);
     myAvatar.setBid(parseInt(data.bid), data.player);
-    if (myAvatar.getIsBidSet() && myAvatar.getName() === data.player) {
-        socket.emit("change turn token to", {turnid: myAvatar.getTurnID()});
+    if (myAvatar.getIsBidSet()) {
+        if (myAvatar.getName() === data.player) {
+            socket.emit("change turn token to", {turnid: myAvatar.getTurnID()});
+        } else {
+            socket.emit("get hand", {num_cards: CARDS_TO_DRAW});
+        }
     }
 }
 
@@ -202,6 +221,10 @@ function onTrumpReceived(data) {
     console.log("trump card received: " + data.trump);
     var trump = genTrumpCard(data.trump);
     myAvatar.setTrump(trump);
+    if (myAvatar.getIsTrumpSet() &&
+        myAvatar.getName() === myAvatar.getBiddingPlayer()) {
+        socket.emit("get hand", {num_cards: CARDS_TO_DRAW});
+    }
 }
 
 // adds debugging information to the console which is received from the server.
@@ -216,7 +239,7 @@ function onOutOfTurnPlay(data) {
 
 function onRemotePlayCard(data) {
     var pot = myAvatar.getPot();
-    console.log("Remote player " + myAvatar.getPlayerAt(data.turnid) +
+    console.log("Remote player: " + myAvatar.getPlayerAt(data.turnid) +
         " played a card");
     pot.addCard(data.card, data.turnid);
     var pot_index = positions[myAvatar.getTurnID() - data.turnid];
@@ -249,7 +272,7 @@ function onPlayingCycle(data) {
 }
 
 function onReceiveHand(data) {
-    var hand = myAvatar.getHand().clear();
+    var hand = myAvatar.getHand();
     for (var i = 0; i < data.length; i++) {
         hand.add(genCard(data[i]));
     }

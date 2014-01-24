@@ -25,6 +25,9 @@ var Pot = function() {
     // token of cards in the pot
     var addCard = function(card_token, turnID) {
         if (pot.length === 4) {
+            for (var i = 0; i < pot.length; i++) {
+                console.log(pot[i]);
+            }
             throw "Pot full with 4 cards. No space for " + card_token;
         }
         var card = genCard(card_token);

@@ -17,6 +17,7 @@ Player = require("./public/js/Player").Player;
 var
 PORT = 8070,
 MAX_PLAYERS = 4, // maximum number of players that can play
+CARDS_TO_DRAW = 4,
 socket,  //Socket controller
 deck,    // global deck for the game for each round
 pseudonames = ['phi', 'gamma', 'beta', 'alpha'],
@@ -110,7 +111,8 @@ function onStartRound() {
     if (players.length != 4) {
         broadcastToAll(this, "debug msg", {msg: "# players != 4"});
     } else {
-        broadcastToAll(this, "request hand", {num_cards:8});
+        this.broadcast.emit("start round");
+        broadcastToAll(this, "request hand", {num_cards:CARDS_TO_DRAW});
         util.log("Chance Token = " + ctoken);
     }
 }
@@ -164,7 +166,7 @@ function serializeHand(hand) {
 }
 
 function onGetHandRequest(data) {
-    util.log("Player " + this.id + " is asking for " + data.num_cards +
+    util.log("Player " + this.name + " is asking for " + data.num_cards +
          " cards");
     if (deck.isEmpty()) {
         deck.init().shuffle();

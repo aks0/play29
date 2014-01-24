@@ -23,7 +23,7 @@ var Player = function(l_id, l_name) {
     // all players
     allPlayers = [],
     // hand that the player currently owns
-    hand = null,
+    hand = new Hand(),
     // pot cards which the player can see
     pot = null,
     points = null,
@@ -36,6 +36,7 @@ var Player = function(l_id, l_name) {
     isAlphaPartnerSet = false,
     isBidSet = false,
     isTrumpSet = false,
+    isRoundStarted = false,
     trump = null;
 
     var getID = function() {
@@ -111,7 +112,7 @@ var Player = function(l_id, l_name) {
     }
 
     var setAlphaPartner = function(alpha_partner) {
-        if (isAlphaPartnerSet) {
+        if (getIsAlphaPartnerSet()) {
             throw "alpha's partner is already set; cannot set again!";
         }
 
@@ -134,6 +135,10 @@ var Player = function(l_id, l_name) {
         computeTurnID();
         isAlphaPartnerSet = true;
     }
+
+    var getIsAlphaPartnerSet = function() {
+        return isAlphaPartnerSet;
+    };
 
     var setAllPlayers = function(data) {
         if (allPlayers.length !== 0) {
@@ -161,9 +166,6 @@ var Player = function(l_id, l_name) {
     };
 
     var getHand = function() {
-        if (hand === null) {
-            hand = new Hand();
-        }
         return hand;
     };
 
@@ -200,6 +202,7 @@ var Player = function(l_id, l_name) {
 
     var reset = function() {
         subRound = 0;
+        hand.clear();
         gameScores[0].resetRoundPoints();
         gameScores[1].resetRoundPoints();
         bid = -1;
@@ -207,6 +210,7 @@ var Player = function(l_id, l_name) {
         bidding_player = null;
         isBidSet = false;
         isTrumpSet = false;
+        isRoundStarted = false;
         return this;
     };
 
@@ -215,8 +219,8 @@ var Player = function(l_id, l_name) {
     };
 
     var setBid = function(bid_value, bplayer) {
-        if (!isAlphaPartnerSet) {
-            console.log("Please select team first.");
+        if (!getIsRoundStarted()) {
+            console.log("Please start the round first.");
             return this;
         }
         if (isBidSet) {
@@ -250,6 +254,25 @@ var Player = function(l_id, l_name) {
         return isBidSet;
     };
 
+    var startRound = function() {
+        if (getIsRoundStarted()) {
+            console.log("Round has already started.");
+            return this;
+        } else if (!getIsAlphaPartnerSet()) {
+            console.log("Please set alpha partner first.");
+            return this;
+        } else if (allPlayers.length != 4) {
+            console.log("Not enough players to start the round.");
+            return this;
+        }
+        isRoundStarted = true;
+        return this;
+    };
+
+    var getIsRoundStarted = function() {
+        return isRoundStarted;
+    };
+
     return {
         getID: getID,
         equals: equals,
@@ -258,6 +281,7 @@ var Player = function(l_id, l_name) {
         getName: getName,
         getTurnID: getTurnID,
         setAlphaPartner: setAlphaPartner,
+        getIsAlphaPartnerSet: getIsAlphaPartnerSet,
         getPlayerAt: getPlayerAt,
         setAllPlayers: setAllPlayers,
         renamePlayer: renamePlayer,
@@ -269,6 +293,8 @@ var Player = function(l_id, l_name) {
         getSubRound: getSubRound,
         incrSubRound: incrSubRound,
         reset: reset,
+        startRound: startRound,
+        getIsRoundStarted: getIsRoundStarted,
         getBid: getBid,
         setBid: setBid,
         getBiddingTeam: getBiddingTeam,
