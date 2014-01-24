@@ -166,7 +166,7 @@ function serializeHand(hand) {
 }
 
 function onGetHandRequest(data) {
-    util.log("Player " + this.name + " is asking for " + data.num_cards +
+    util.log("Player " + this.id + " is asking for " + data.num_cards +
          " cards");
     if (deck.isEmpty()) {
         deck.init().shuffle();

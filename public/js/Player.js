@@ -2,6 +2,7 @@ var
 Pot,
 GameScore,
 util29,
+Bid,
 Hand;
 
 // server code
@@ -10,6 +11,7 @@ try {
     Pot = require("./Pot").Pot;
     util29 = require("./Util29").Util29();
     GameScore = require("./GameScore").GameScore;
+    Bid = require("./Bid").Bid;
 // client code
 } catch(err) {
     util29 = new Util29();
@@ -30,11 +32,8 @@ var Player = function(l_id, l_name) {
     subRound = 0,
     teamID = -1,
     gameScores = new Array(),
-    bid = -1,
-    bidding_team = -1,
-    bidding_player = null,
+    bid = new Bid(),
     isAlphaPartnerSet = false,
-    isBidSet = false,
     isTrumpSet = false,
     isRoundStarted = false,
     trump = null;
@@ -69,7 +68,7 @@ var Player = function(l_id, l_name) {
             console.log("Trump is already set. You cannot set trump again.");
             return this;
         }
-        if (!isBidSet) {
+        if (!bid.isSet()) {
             console.log("You must first finish bidding.");
             return this;
         }
@@ -205,10 +204,7 @@ var Player = function(l_id, l_name) {
         hand.clear();
         gameScores[0].resetRoundPoints();
         gameScores[1].resetRoundPoints();
-        bid = -1;
-        bidding_team = -1;
-        bidding_player = null;
-        isBidSet = false;
+        bid.clear();
         isTrumpSet = false;
         isRoundStarted = false;
         return this;
@@ -216,42 +212,6 @@ var Player = function(l_id, l_name) {
 
     var getBid = function() {
         return bid;
-    };
-
-    var setBid = function(bid_value, bplayer) {
-        if (!getIsRoundStarted()) {
-            console.log("Please start the round first.");
-            return this;
-        }
-        if (isBidSet) {
-            throw "bid is already set, you cannot reset bid.";
-        } else if (bid_value < 17 || bid_value >= 29) {
-            throw "Invalid bid value, bid \in [17, 29].";
-        }
-
-        bid = bid_value;
-        for (var i = 0; i < 4; i++) {
-            if (allPlayers[i] === bplayer) {
-                bidding_team = i % 2;
-                bidding_player = bplayer;
-                break;
-            }
-        }
-        console.log("Bid successful!");
-        isBidSet = true;
-        return this;
-    };
-
-    var getBiddingTeam = function() {
-        return bidding_team;
-    };
-
-    var getBiddingPlayer = function() {
-        return bidding_player;
-    };
-
-    var getIsBidSet = function() {
-        return isBidSet;
     };
 
     var startRound = function() {
@@ -296,10 +256,6 @@ var Player = function(l_id, l_name) {
         startRound: startRound,
         getIsRoundStarted: getIsRoundStarted,
         getBid: getBid,
-        setBid: setBid,
-        getBiddingTeam: getBiddingTeam,
-        getBiddingPlayer: getBiddingPlayer,
-        getIsBidSet: getIsBidSet,
         getIsTrumpSet: getIsTrumpSet,
         getTrump: getTrump,
         setTrump: setTrump

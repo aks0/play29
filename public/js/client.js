@@ -43,10 +43,11 @@ function subRoundCompleted(winner_id) {
     // last match for the round
     if (myAvatar.getSubRound() === 7) {
         var game_scores = myAvatar.getGameScores();
-        var bidding_team = myAvatar.getBiddingTeam();
-        var other_team = (bidding_team + 1) % 2
         var bid = myAvatar.getBid();
-        game_scores[bidding_team].updateScores(game_scores[other_team], bid);
+        game_scores[bid.getTeam()].updateScores(
+            game_scores[bid.getTeam() ^ 1],
+            bid
+        );
         
         console.log("GamePoints# Team0: " + game_scores[0]);
         console.log("GamePoints# Team1: " + game_scores[1]);
@@ -82,8 +83,8 @@ function checkPotWinner() {
 /******************************************************************************/
 // Input from the index.html form page
 function trumpEntered() {
-    if (myAvatar.getName() !== myAvatar.getBiddingPlayer()) {
-        console.log("Only the bid winner " + myAvatar.getBiddingPlayer() +
+    if (myAvatar.getName() !== myAvatar.getBid().getPlayer()) {
+        console.log("Only the bid winner " + myAvatar.getBid().getPlayer() +
             " can set the trump.");
         return;
     }
@@ -131,10 +132,22 @@ function cardClicked(item){
 }
 
 function enterBid() {
-    var bid = document.getElementsByName("bid")[0].value;
-    console.log("Bid Entered: " + bid);
+    var bid_value = parseInt(document.getElementsByName("bid")[0].value);
+    console.log("Bid Entered: " + bid_value);
+    var bid = myAvatar.getBid();
+    if (!myAvatar.getIsRoundStarted()) {
+        console.log("Please start the round first.");
+        return;
+    } else if (bid.isSet()) {
+        console.log("bid is already set, you cannot reset bid.");
+        return;
+    } else if (bid_value < 17 || bid_value > 29) {
+        console.log( "Invalid bid value, bid \in [17, 29].");
+        return;
+    }
+
     socket.emit("broadcast", {event:"bid",
-        info: {bid: bid, player: myAvatar.getName()}
+        info: {bid: bid_value, player: myAvatar.getName()}
     });
 }
 
@@ -194,13 +207,21 @@ function onAlphaPartner(data) {
 
 function onBid(data) {
     console.log("Bid: " + data.bid + " Bidding-Player: " + data.player);
-    myAvatar.setBid(parseInt(data.bid), data.player);
-    if (myAvatar.getIsBidSet()) {
-        if (myAvatar.getName() === data.player) {
-            socket.emit("change turn token to", {turnid: myAvatar.getTurnID()});
-        } else {
-            socket.emit("get hand", {num_cards: CARDS_TO_DRAW});
+    var bid = myAvatar.getBid();
+    bid.set(data.bid);
+    for (var i = 0; i < 4; i++) {
+        if (myAvatar.getPlayerAt(i) === data.player) {
+            bid.setTeam(i % 2);
+            bid.setPlayer(data.player);
+            break;
         }
+    }
+    // the bid-winner must set the trump next before seeing the remaining cards
+    if (myAvatar.getName() === data.player) {
+        socket.emit("change turn token to", {turnid: myAvatar.getTurnID()});
+    // rest players can see their remaining cards
+    } else {
+        socket.emit("get hand", {num_cards: CARDS_TO_DRAW});
     }
 }
 
@@ -218,7 +239,7 @@ function onTrumpReceived(data) {
     var trump = genTrumpCard(data.trump);
     myAvatar.setTrump(trump);
     if (myAvatar.getIsTrumpSet() &&
-        myAvatar.getName() === myAvatar.getBiddingPlayer()) {
+        myAvatar.getName() === myAvatar.getBid().getPlayer()) {
         socket.emit("get hand", {num_cards: CARDS_TO_DRAW});
     }
 }
