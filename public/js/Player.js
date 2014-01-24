@@ -3,6 +3,7 @@ Pot,
 GameScore,
 util29,
 Bid,
+Trump,
 Hand;
 
 // server code
@@ -12,6 +13,7 @@ try {
     util29 = require("./Util29").Util29();
     GameScore = require("./GameScore").GameScore;
     Bid = require("./Bid").Bid;
+    Trump = require("./Trump").Trump;
 // client code
 } catch(err) {
     util29 = new Util29();
@@ -34,9 +36,8 @@ var Player = function(l_id, l_name) {
     gameScores = new Array(),
     bid = new Bid(),
     isAlphaPartnerSet = false,
-    isTrumpSet = false,
     isRoundStarted = false,
-    trump = null;
+    trump = new Trump();
 
     var getID = function() {
         return id;
@@ -60,22 +61,7 @@ var Player = function(l_id, l_name) {
     };
 
     var getTrump = function() {
-        return this.trump;
-    };
-
-    var setTrump = function(trump) {
-        if (bid.isEmpty()) {
-            console.log("You must first finish bidding.");
-            return this;
-        }
-        this.trump = trump;
-        console.log("Trump setting successful");
-        isTrumpSet = true;
-        return this;
-    };
-
-    var getIsTrumpSet = function() {
-        return isTrumpSet;
+        return trump;
     };
 
     var getTurnID = function() {
@@ -201,7 +187,7 @@ var Player = function(l_id, l_name) {
         gameScores[0].resetRoundPoints();
         gameScores[1].resetRoundPoints();
         bid.clear();
-        isTrumpSet = false;
+        trump.clear();
         isRoundStarted = false;
         return this;
     };
@@ -252,9 +238,7 @@ var Player = function(l_id, l_name) {
         startRound: startRound,
         getIsRoundStarted: getIsRoundStarted,
         getBid: getBid,
-        getIsTrumpSet: getIsTrumpSet,
-        getTrump: getTrump,
-        setTrump: setTrump
+        getTrump: getTrump
     };
 };
 

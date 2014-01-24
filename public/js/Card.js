@@ -101,13 +101,6 @@ var Card = function(denom, suit) {
         return denom + ":" + suit;
     };
 
-    // empties the card
-    var clear = function() {
-        denom = '0';
-        suit = '0';
-        return this;
-    };
-
     return {
         getDenomName: getDenomName,
         getSuitName: getSuitName,
@@ -117,7 +110,6 @@ var Card = function(denom, suit) {
         getPoints: getPoints,
         equals: equals,
         serialize: serialize,
-        clear: clear,
         toString: toString
     };
 };
@@ -151,7 +143,6 @@ function genCard(str) {
     }
     return new Card(arr[0], arr[1]);
 }
-
 /******************************************************************************/
 // Card construction code
 

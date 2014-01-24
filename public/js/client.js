@@ -63,8 +63,8 @@ function subRoundCompleted(winner_id) {
 function checkPotWinner() {
     var pot = myAvatar.getPot();
     console.log("checking PotWinner, length = " + pot.size());
-    console.log("trump is " + myAvatar.getTrump());
-    if (pot.size() !== 4 || myAvatar.getTrump() === null) {
+    console.log("trump is " + myAvatar.getTrump().toString());
+    if (pot.size() !== 4 || myAvatar.getTrump().isEmpty()) {
         return;
     }
     var winning_card = pot.getPotWinner(myAvatar.getTrump());
@@ -90,8 +90,13 @@ function trumpEntered() {
     }
     var trump_token = document.getElementsByName("trump")[0].value;
     console.log("Trump Token: " + trump_token);
+    var denom = stripID(trump_token)[0];
+    if (denom !== '2' && denom !== '3' && denom !== '4' && denom !== '5') {
+        console.log("Invalid trump is set!");
+        return;
+    }
     socket.emit("broadcast", {event: "trump received",
-        info: {trump: trump_token}
+        info: {trump_token: trump_token}
     });
 }
 
@@ -122,7 +127,7 @@ function cardClicked(item){
         return;
     }
 
-    if (!myAvatar.getIsTrumpSet()) {
+    if (myAvatar.getTrump().isEmpty()) {
         console.log("The trump is not yet set. Poke the bidder!");
         return;
     }
@@ -235,16 +240,13 @@ function onReceiveAvatar(data) {
 }
 
 function onTrumpReceived(data) {
-    console.log("trump card received: " + data.trump);
-    if (myAvatar.getIsTrumpSet()) {
+    console.log("trump card received: " + data.trump_token);
+    if (!myAvatar.getTrump().isEmpty()) {
         console.log("Trump is already set. You cannot set trump again.");
         return;
     }
-        
-    var trump = genTrump(data.trump);
-    myAvatar.setTrump(trump);
-    if (myAvatar.getIsTrumpSet() &&
-        myAvatar.getName() === myAvatar.getBid().getPlayer()) {
+    myAvatar.getTrump().set(data.trump_token);
+    if (myAvatar.getName() === myAvatar.getBid().getPlayer()) {
         socket.emit("get hand", {num_cards: CARDS_TO_DRAW});
     }
 }

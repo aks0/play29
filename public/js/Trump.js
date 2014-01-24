@@ -8,15 +8,10 @@ try {
 } catch(err) {
 }
 
-var Trump = function(denom, suit) {
-    console.log("setting Trump: " + denom + ":" + suit);
-    if (denom !== '2' && denom !== '3' && denom !== '4' && denom !== '5') {
-        throw "Invalid trump is set!";
-    }
-
+var Trump = function() {
     var
-    trump = new Card(denom, suit),
-    // by default trump is closed.
+    trump = null,
+    // by default trump should be closed.
     isTrumpOpen = true;
 
     var isReverse = function() {
@@ -47,7 +42,27 @@ var Trump = function(denom, suit) {
     };
 
     var clear = function() {
-        
+        trump = null;
+    };
+
+    var isEmpty = function() {
+        return trump === null;
+    };
+
+    var set = function(trump_token) {
+        trump = genCard(trump_token);
+    };
+
+    var getDenom = function() {
+        return trump.getDenom();
+    };
+
+    var getSuit = function() {
+        return trump.getSuit();
+    };
+
+    var toString = function() {
+        return trump.toString();
     };
 
     return {
@@ -56,11 +71,12 @@ var Trump = function(denom, suit) {
         open: open,
         isNoTrump: isNoTrump,
         isSuitTrump: isSuitTrump,
-        // card functions
-        getDenom: trump.getDenom,
-        getSuit: trump.getSuit,
-        serialize: trump.serialize,
-        toString: trump.toString
+        clear: clear,
+        isEmpty: isEmpty,
+        set: set,
+        getDenom: getDenom,
+        getSuit: getSuit,
+        toString: toString
     };
 };
 
@@ -69,15 +85,4 @@ try {
     exports.Trump = Trump;
 // client code
 } catch(err) {
-}
-
-/**
- * Factory method for creating a new Trump from String "denom:suit"
- */
-function genTrump(str) {
-    var arr = stripID(str);
-    if (arr === null) {
-        return null;
-    }
-    return new Trump(arr[0], arr[1]);
 }
