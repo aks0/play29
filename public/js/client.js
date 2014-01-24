@@ -51,10 +51,6 @@ function subRoundCompleted(winner_id) {
         console.log("GamePoints# Team0: " + game_scores[0]);
         console.log("GamePoints# Team1: " + game_scores[1]);
         myAvatar.reset();
-        // only one person should be able to start the next round.
-        if (myAvatar.getTurnID() === winner_id) {
-            //startRound();
-        }
     } else {
         myAvatar.incrSubRound();
         if (myAvatar.getTurnID() === winner_id) {
