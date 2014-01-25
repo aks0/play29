@@ -13,7 +13,7 @@ var GameScore = function(team_id) { // later change it to team
 
 	// always call this function on the team calling the bid
 	var updateScores = function(other_score, bid) {
-		gamePoints += bid.getPoints(roundPoints >= bid.get());
+		gamePoints += bid.getPoints(roundPoints);
 		if (gamePoints <= -6) {
 			incrBlackSets();
 			reset();

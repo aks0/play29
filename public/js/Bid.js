@@ -41,13 +41,17 @@ var Bid = function() {
 		return this;
 	};
 
-	// if the argument is true, it returns the points for the keeping the bid
-	var getPoints = function(isWinner) {
-		var factor = isWinner ? 1 : -1;
+	// given the round points, find the corresponding game points to be given
+	var getPoints = function(round_points) {
+		var win_loss = round_points >= bid ? 1 : -1;
+		var half_factor = round_points < Math.ceil(bid/2) ? 2 : 1;
+
 		if (bid <= 20) {
-			return factor * double_factor * redouble_factor;
+			factor = double_factor * redouble_factor * half_factor;
+			return win_loss * Math.min(factor, 4);
 		} else {
-			return (factor * 2) * double_factor;
+			factor = double_factor * 2 * half_factor;
+			return win_loss * Math.min(factor, 4);
 		}
 	};
 

@@ -168,6 +168,9 @@ function double() {
     } else if (myAvatar.getBid().isDouble()) {
         console.log("Double can be given only once.");
         return;
+    } else if (!myAvatar.getTrump().isEmpty()) {
+        console.log("Double can be given only before the trump is set.");
+        return;
     }
     broadcast("double", {});
 }
