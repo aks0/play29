@@ -37,6 +37,10 @@ var setEventHandlers = function() {
     socket.on("connect", onSocketConnected);
 };
 
+function broadcast(event, info) {
+    socket.emit("broadcast", {event: event, info: info});
+}
+
 function roundCompleted(winner_id) {
     console.log("Round #" + myAvatar.getRound().get() + " is completed.");
     myAvatar.getPot().clear();
@@ -95,18 +99,14 @@ function trumpEntered() {
         console.log("Invalid trump is set!");
         return;
     }
-    socket.emit("broadcast", {event: "trump received",
-        info: {trump_token: trump_token}
-    });
+    broadcast("trump received", {trump_token: trump_token});
 }
 
 function changePlayerName() {
     var new_name = document.getElementsByName("player_name")[0].value;
     console.log("Player New Name: " + new_name);
     var old_name = myAvatar.getName();
-    socket.emit("broadcast", {event: "rename player",
-        info: {old_name: old_name, new_name: new_name}
-    });
+    broadcast("rename player", {old_name: old_name, new_name: new_name});
 }
 
 function startRound() {
@@ -120,10 +120,8 @@ function startRound() {
         console.log("Not enough players to start the round.");
         return;
     }
-    socket.emit("broadcast", {event: "start round", info: {}});
-    socket.emit("broadcast", {event: "request hand",
-        info: {num_cards:CARDS_TO_DRAW}
-    });
+    broadcast("start round", {});
+    broadcast("request hand", {num_cards:CARDS_TO_DRAW});
 };
 
 function cardClicked(item){
@@ -160,9 +158,7 @@ function enterBid() {
         return;
     }
 
-    socket.emit("broadcast", {event:"bid",
-        info: {bid: bid_value, player: myAvatar.getName()}
-    });
+    broadcast("bid", {bid: bid_value, player: myAvatar.getName()});
 }
 
 function double() {
@@ -173,7 +169,7 @@ function double() {
         console.log("Double can be given only once.");
         return;
     }
-    socket.emit("broadcast", {event:"double", info: {}});
+    broadcast("double", {});
 }
 
 function redouble() {
@@ -184,15 +180,13 @@ function redouble() {
         console.log("Re-Double can be given after double only.");
         return;
     }
-    socket.emit("broadcast", {event: "redouble", info: {}});
+    broadcast("redouble", {});
 }
 
 function connectAlpha() {
     var alpha_parter = document.getElementsByName("alpha_parter")[0].value;
     console.log("alpha_parter: " + alpha_parter);
-    socket.emit("broadcast", {event: "alpha partner",
-        info: {alpha_partner: alpha_parter}
-    });
+    broadcast("alpha partner", {alpha_partner: alpha_parter});
 }
 
 /******************************************************************************/
