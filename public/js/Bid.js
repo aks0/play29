@@ -39,6 +39,16 @@ var Bid = function() {
 		return this;
 	};
 
+	// if the argument is true, it returns the points for the keeping the bid
+	var getPoints = function(isWinner) {
+		var factor = isWinner ? 1 : -1;
+		if (bid <= 20) {
+			return factor;
+		} else {
+			return (factor * 2);
+		}
+	};
+
 	var clear = function() {
 		bid = null;
 		team = null;
@@ -54,6 +64,7 @@ var Bid = function() {
 		setTeam: setTeam,
 		getPlayer: getPlayer,
 		setPlayer: setPlayer,
+		getPoints: getPoints,
 		clear: clear
 	};
 };

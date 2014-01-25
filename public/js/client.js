@@ -155,7 +155,7 @@ function enterBid() {
     } else if (!bid.isEmpty()) {
         console.log("bid is already set, you cannot reset bid.");
         return;
-    } else if (bid_value < 17 || bid_value > 29) {
+    } else if (bid_value < 17 || bid_value >= 29) {
         console.log( "Invalid bid value, bid \in [17, 29].");
         return;
     }
