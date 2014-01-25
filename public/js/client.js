@@ -37,11 +37,11 @@ var setEventHandlers = function() {
     socket.on("connect", onSocketConnected);
 };
 
-function subRoundCompleted(winner_id) {
-    console.log("SubRound #" + myAvatar.getSubRound() + " is completed.");
+function roundCompleted(winner_id) {
+    console.log("Round #" + myAvatar.getRound().get() + " is completed.");
     myAvatar.getPot().clear();
     // last match for the round
-    if (myAvatar.getSubRound() === 7) {
+    if (myAvatar.getRound().hasFinished()) {
         var game_scores = myAvatar.getGameScores();
         var bid = myAvatar.getBid();
         game_scores[bid.getTeam()].updateScores(
@@ -53,7 +53,7 @@ function subRoundCompleted(winner_id) {
         console.log("GamePoints# Team1: " + game_scores[1]);
         myAvatar.reset();
     } else {
-        myAvatar.incrSubRound();
+        myAvatar.getRound().next();
         if (myAvatar.getTurnID() === winner_id) {
             socket.emit("change turn token to", {turnid: winner_id});
         }
@@ -77,7 +77,7 @@ function checkPotWinner() {
     var team_points = myAvatar.getPoints();
     console.log("Team 0: " + team_points.team0 + "\tTeam 1: " +
         team_points.team1);
-    subRoundCompleted(winner_id);
+    roundCompleted(winner_id);
 }
 
 /******************************************************************************/
@@ -110,11 +110,20 @@ function changePlayerName() {
 }
 
 function startRound() {
-    myAvatar.startRound();
-    if (myAvatar.getIsRoundStarted()) {
-        console.log("sending start round request to server.");
-        socket.emit("start round");
+    if (myAvatar.getRound().hasStarted()) {
+        console.log("Round has already started.");
+        return;
+    } else if (!myAvatar.getIsAlphaPartnerSet()) {
+        console.log("Please set alpha partner first.");
+        return;
+    } else if (myAvatar.getNumPlayers() != 4) {
+        console.log("Not enough players to start the round.");
+        return;
     }
+    socket.emit("broadcast", {event: "start round", info: {}});
+    socket.emit("broadcast", {event: "request hand",
+        info: {num_cards:CARDS_TO_DRAW}
+    });
 };
 
 function cardClicked(item){
@@ -140,7 +149,7 @@ function enterBid() {
     var bid_value = parseInt(document.getElementsByName("bid")[0].value);
     console.log("Bid Entered: " + bid_value);
     var bid = myAvatar.getBid();
-    if (!myAvatar.getIsRoundStarted()) {
+    if (!myAvatar.getRound().hasStarted()) {
         console.log("Please start the round first.");
         return;
     } else if (!bid.isEmpty()) {
@@ -202,7 +211,7 @@ function onSocketConnected() {
 
 function onStartRound() {
     console.log("starting round.");
-    myAvatar.startRound();
+    myAvatar.getRound().start();
 }
 
 function onAlphaPartner(data) {

@@ -87,9 +87,6 @@ function onSocketConnection(client) {
     // client selected a card to play
     client.on("select card to play", onCardToPlay);
 
-    // one of the clients has indicated to start the game
-    client.on("start round", onStartRound);
-
     // if one client wants to send some information to all clients
     // including itself
     client.on("broadcast", onBroadcast);
@@ -103,18 +100,6 @@ function onBroadcast(data) {
     console.log("broadcast: event#" + data.event + " info#" + data.info);
     this.broadcast.emit(data.event, data.info);
     this.emit(data.event, data.info);
-}
-
-function onStartRound() {
-    util.log("StartRound request received. Number of players = "
-        + players.length);
-    if (players.length != 4) {
-        broadcastToAll(this, "debug msg", {msg: "# players != 4"});
-    } else {
-        this.broadcast.emit("start round");
-        broadcastToAll(this, "request hand", {num_cards:CARDS_TO_DRAW});
-        util.log("Chance Token = " + ctoken);
-    }
 }
 
 // broadcasts the event and data to all the connected clients

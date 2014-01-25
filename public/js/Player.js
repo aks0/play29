@@ -3,6 +3,7 @@ Pot,
 GameScore,
 util29,
 Bid,
+Round,
 Trump,
 Hand;
 
@@ -14,6 +15,7 @@ try {
     GameScore = require("./GameScore").GameScore;
     Bid = require("./Bid").Bid;
     Trump = require("./Trump").Trump;
+    Round = require("./Round").Round;
 // client code
 } catch(err) {
     util29 = new Util29();
@@ -31,12 +33,11 @@ var Player = function(l_id, l_name) {
     // pot cards which the player can see
     pot = null,
     points = null,
-    subRound = 0,
+    round = new Round(),
     teamID = -1,
     gameScores = new Array(),
     bid = new Bid(),
     isAlphaPartnerSet = false,
-    isRoundStarted = false,
     trump = new Trump();
 
     var getID = function() {
@@ -133,6 +134,10 @@ var Player = function(l_id, l_name) {
         return this;
     };
 
+    var getNumPlayers = function() {
+        return allPlayers.length;
+    };
+
     var renamePlayer = function(old_name, new_name) {
         for (var i = 0; i < allPlayers.length; i++) {
             if (allPlayers[i] === old_name) {
@@ -172,47 +177,22 @@ var Player = function(l_id, l_name) {
         return gameScores;
     };
 
-    var getSubRound = function() {
-        return subRound;
-    };
-
-    var incrSubRound = function() {
-        subRound++;
-        return this;
+    var getRound = function() {
+        return round;
     };
 
     var reset = function() {
-        subRound = 0;
+        round.clear();
         hand.clear();
         gameScores[0].resetRoundPoints();
         gameScores[1].resetRoundPoints();
         bid.clear();
         trump.clear();
-        isRoundStarted = false;
         return this;
     };
 
     var getBid = function() {
         return bid;
-    };
-
-    var startRound = function() {
-        if (getIsRoundStarted()) {
-            console.log("Round has already started.");
-            return this;
-        } else if (!getIsAlphaPartnerSet()) {
-            console.log("Please set alpha partner first.");
-            return this;
-        } else if (allPlayers.length != 4) {
-            console.log("Not enough players to start the round.");
-            return this;
-        }
-        isRoundStarted = true;
-        return this;
-    };
-
-    var getIsRoundStarted = function() {
-        return isRoundStarted;
     };
 
     return {
@@ -226,17 +206,15 @@ var Player = function(l_id, l_name) {
         getIsAlphaPartnerSet: getIsAlphaPartnerSet,
         getPlayerAt: getPlayerAt,
         setAllPlayers: setAllPlayers,
+        getNumPlayers: getNumPlayers,
         renamePlayer: renamePlayer,
         getHand: getHand,
         getGameScores: getGameScores,
         addPoints: addPoints,
         getPoints: getPoints,
         getPot: getPot,
-        getSubRound: getSubRound,
-        incrSubRound: incrSubRound,
+        getRound: getRound,
         reset: reset,
-        startRound: startRound,
-        getIsRoundStarted: getIsRoundStarted,
         getBid: getBid,
         getTrump: getTrump
     };
