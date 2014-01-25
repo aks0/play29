@@ -13,6 +13,7 @@ try {
 var Pot = function() {
     var
     pot = new Array(),
+    lastHand = null,
     cardtokenToTurnIDMap = new Object();
 
     var isEmpty = function() {
@@ -36,6 +37,7 @@ var Pot = function() {
     };
 
     var clear = function() {
+        lastHand = pot;
         setTimeout(
             function(){
                 for (var i = 0; i < 4; i++) {
@@ -115,6 +117,10 @@ var Pot = function() {
         return points;
     };
 
+    var getLastHand = function() {
+        return lastHand;
+    };
+
     return {
         isEmpty: isEmpty,
         addCard: addCard,
@@ -122,6 +128,7 @@ var Pot = function() {
         getPotWinner: getPotWinner,
         getPoints: getPoints,
         cardPlayedBy: cardPlayedBy,
+        getLastHand: getLastHand,
         clear: clear
     };
 };

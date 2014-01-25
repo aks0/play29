@@ -147,6 +147,18 @@ function cardClicked(item){
         {turnid: myAvatar.getTurnID(), card: id_token});
 }
 
+function showLastHand() {
+    console.log(myAvatar.getName() + " wants to see last hand.");
+    var last_hand = myAvatar.getPot().getLastHand();
+    if (last_hand !== null) {
+        var str = "";
+        for (var i = 0; i < last_hand.length; i++) {
+            str += last_hand[i].toString() + ", ";
+        };
+        console.log("Last Hand: " + str);
+    }
+}
+
 function enterBid() {
     var bid_value = parseInt(document.getElementsByName("bid")[0].value);
     console.log("Bid Entered: " + bid_value);
