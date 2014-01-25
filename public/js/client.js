@@ -46,6 +46,10 @@ function roundCompleted(winner_id) {
     myAvatar.getPot().clear();
     // last match for the round
     if (myAvatar.getRound().hasFinished()) {
+        // last hand winner gets 1 point
+        myAvatar.addPoints(winner_id, 1);
+        console.log("Last hand winner " + myAvatar.getPlayerAt(winner_id) +
+            " gets 1 extra point.");
         var game_scores = myAvatar.getGameScores();
         var bid = myAvatar.getBid();
         game_scores[bid.getTeam()].updateScores(
@@ -153,7 +157,7 @@ function enterBid() {
     } else if (!bid.isEmpty()) {
         console.log("bid is already set, you cannot reset bid.");
         return;
-    } else if (bid_value < 17 || bid_value >= 29) {
+    } else if (bid_value < 17 || bid_value > 29) {
         console.log( "Invalid bid value, bid \in [17, 29].");
         return;
     }
