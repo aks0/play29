@@ -34,7 +34,7 @@ var Player = function(l_id, l_name) {
     pot = null,
     points = null,
     round = new Round(),
-    teamID = -1,
+    team = -1,
     gameScores = new Array(),
     bid = new Bid(),
     isAlphaPartnerSet = false,
@@ -90,7 +90,7 @@ var Player = function(l_id, l_name) {
                 turnID = i;
             }
         }
-        teamID = turnID % 2;
+        team = turnID % 2;
     }
 
     var setAlphaPartner = function(alpha_partner) {
@@ -195,6 +195,10 @@ var Player = function(l_id, l_name) {
         return bid;
     };
 
+    var getTeam = function() {
+        return team;
+    };
+
     return {
         getID: getID,
         equals: equals,
@@ -216,6 +220,7 @@ var Player = function(l_id, l_name) {
         getRound: getRound,
         reset: reset,
         getBid: getBid,
+        getTeam: getTeam,
         getTrump: getTrump
     };
 };

@@ -169,7 +169,11 @@ function double() {
     if (myAvatar.getBid().isEmpty()) {
         console.log("Double can be given only after bid is set");
         return;
-    } else if (myAvatar.getBid().isDouble()) {
+    } else if (myAvatar.getTeam() === myAvatar.getBid().getTeam()) {
+        console.log("Double can be given only by opposite team.");
+        return;
+    }
+    else if (myAvatar.getBid().isDouble()) {
         console.log("Double can be given only once.");
         return;
     } else if (!myAvatar.getTrump().isEmpty()) {
@@ -185,6 +189,9 @@ function redouble() {
         return;
     } else if (!myAvatar.getBid().isDouble()) {
         console.log("Re-Double can be given after double only.");
+        return;
+    } else if (myAvatar.getTeam() !== myAvatar.getBid().getTeam()) {
+        console.log("Re-Double can be done only by bidding team.");
         return;
     }
     broadcast("redouble", {});
