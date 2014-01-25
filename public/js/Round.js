@@ -38,6 +38,7 @@ var Round = function() {
 	};
 
 	var setDealer = function(arg) {
+		console.log("setting dealer: " + arg);
 		dealer = arg;
 	};
 

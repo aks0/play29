@@ -94,7 +94,17 @@ function onSocketConnection(client) {
 
     // reassign turn-token to the winning player
     client.on("change turn token to", onChangeTurnToken);
+
+    // clear state except the connected players
+    client.on("clear", onClear);
 };
+
+// clears the current state of the server so that new round can be started
+function onClear() {
+    util.log("clearing server state");
+    hands = new Object();
+    deck.init().shuffle();
+}
 
 // broadcasts to all the clients
 function onBroadcast(data) {

@@ -1,9 +1,11 @@
 var
+Card,
 util29;
 
 // server code
 try {
     util29 = require("./Util29").Util29();
+    Card = require("./Card").Card;
 // client code
 } catch(err) {
     util29 = new Util29();
@@ -53,11 +55,21 @@ var Hand = function() {
 
     var clear = function() {
         hand = new Array();
+        // wash out the cards on display
+        document.getElementById("cards").innerHTML = "";
         return this;
     }
 
     var toString = function() {
         return util29.toString(hand);
+    };
+
+    var getPoints = function() {
+        var points = 0;
+        for (var i = 0; i < hand.length; i++) {
+            points += hand[i].getPoints();
+        }
+        return points;
     };
 
     return {
@@ -68,6 +80,7 @@ var Hand = function() {
         length: length,
         toString: toString,
         clear: clear,
+        getPoints: getPoints,
         add: add
     };
 };

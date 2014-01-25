@@ -89,9 +89,8 @@ function checkPotWinner() {
 }
 
 function fetchNewCards() {
-    var order_id = (myAvatar.getTurnID() + 7 -
-        myAvatar.getRound().getDealer()) % 4;
-    socket.emit("get hand", {num_cards: CARDS_TO_DRAW, order_id: order_id});
+    socket.emit("get hand",
+        {num_cards: CARDS_TO_DRAW, order_id: myAvatar.getOrderID()});
 }
 
 /******************************************************************************/
@@ -222,6 +221,24 @@ function connectAlpha() {
     broadcast("dealer", {dealer: dealer});
 }
 
+function zeroPointsHand() {
+    if (myAvatar.getOrderID() !== 0 && myAvatar.getOrderID() !== 1) {
+        console.log("Only first-two players can throw cards on 0 points.");
+        return;
+    } else if (!myAvatar.getRound().hasStarted()) {
+        console.log("Round has not started yet!");
+        return;
+    } else if (!myAvatar.getBid().isEmpty()) {
+        console.log("Bid has been set, you cannot throw now!");
+        return;
+    }
+    if (myAvatar.getHand().getPoints() === 0) {
+        broadcast("cancel round");
+        socket.emit("clear");
+    }
+    console.log("You cannot throw since you do have points!");
+}
+
 /******************************************************************************/
 // Event-handlers for events triggered from server or other clients 
 function onSocketConnected() {
@@ -260,7 +277,16 @@ function onSocketConnected() {
     socket.on("redouble", onReDouble);
 
     socket.on("dealer", onDealer);
+
+    socket.on("cancel round", onCancelRound);
 };
+
+function onCancelRound() {
+    console.log("cancel round received");
+    var curr_dealer = myAvatar.getRound().getDealer();
+    myAvatar.reset();
+    myAvatar.getRound().setDealer(curr_dealer);
+}
 
 function onDealer(data) {
     console.log("setting dealer " + data.dealer + " (" +

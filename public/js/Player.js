@@ -31,7 +31,7 @@ var Player = function(l_id, l_name) {
     // hand that the player currently owns
     hand = new Hand(),
     // pot cards which the player can see
-    pot = null,
+    pot = new Pot(),
     points = null,
     round = new Round(),
     team = -1,
@@ -156,9 +156,6 @@ var Player = function(l_id, l_name) {
     };
 
     var getPot = function() {
-        if (pot === null) {
-            pot = new Pot();
-        }
         return pot;
     };
 
@@ -188,6 +185,7 @@ var Player = function(l_id, l_name) {
         gameScores[1].resetRoundPoints();
         bid.clear();
         trump.clear();
+        pot.clear();
         return this;
     };
 
@@ -197,6 +195,10 @@ var Player = function(l_id, l_name) {
 
     var getTeam = function() {
         return team;
+    };
+
+    var getOrderID = function() {
+        return (getTurnID() + 7 - getRound().getDealer()) % 4;
     };
 
     return {
@@ -221,6 +223,7 @@ var Player = function(l_id, l_name) {
         reset: reset,
         getBid: getBid,
         getTeam: getTeam,
+        getOrderID: getOrderID,
         getTrump: getTrump
     };
 };
