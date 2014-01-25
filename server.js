@@ -18,8 +18,9 @@ var
 PORT = 8070,
 MAX_PLAYERS = 4, // maximum number of players that can play
 CARDS_TO_DRAW = 4,
-socket,  //Socket controller
-deck,    // global deck for the game for each round
+socket, // Socket controller
+deck,   // global deck for the game for each round
+hands = new Object(), // hands which are to be given to players in order
 pseudonames = ['phi', 'gamma', 'beta', 'alpha'],
 players; // Array of connected players
 
@@ -152,12 +153,17 @@ function serializeHand(hand) {
 
 function onGetHandRequest(data) {
     util.log("Player " + this.id + " is asking for " + data.num_cards +
-         " cards");
-    if (deck.isEmpty()) {
-        deck.init().shuffle();
-    }
-
-    var hand = deck.drawSomeCards(data.num_cards);
+         " cards,order_id: " + data.order_id);
+    if (Object.keys(hands).length === 0) {
+        if (deck.isEmpty()) {
+            deck.init().shuffle();
+        }
+        for (var i = 0; i < 4; i++) {
+            hands[i] = deck.drawSomeCards(data.num_cards);
+        };
+    }    
+    var hand = hands[data.order_id];
+    delete hands[data.order_id];
     this.emit("receive hand", serializeHand(hand));
 };
 

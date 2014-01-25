@@ -1,6 +1,7 @@
 
 var Round = function() {
 	var
+	dealer = -1,
 	id = -1;
 
 	var get = function() {
@@ -27,7 +28,17 @@ var Round = function() {
 
 	var clear = function() {
 		id = -1;
+		dealer = (dealer + 1) % 4;
+		console.log("new dealer is " + dealer);
 		return this;
+	};
+
+	var getDealer = function() {
+		return dealer;
+	};
+
+	var setDealer = function(arg) {
+		dealer = arg;
 	};
 
 	return {
@@ -36,6 +47,8 @@ var Round = function() {
 		hasStarted: hasStarted,
 		hasFinished: hasFinished,
 		next: next,
+		getDealer: getDealer,
+		setDealer: setDealer,
 		clear: clear
 	};
 };

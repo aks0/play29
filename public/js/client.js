@@ -88,6 +88,12 @@ function checkPotWinner() {
     roundCompleted(winner_id);
 }
 
+function fetchNewCards() {
+    var order_id = (myAvatar.getTurnID() + 7 -
+        myAvatar.getRound().getDealer()) % 4;
+    socket.emit("get hand", {num_cards: CARDS_TO_DRAW, order_id: order_id});
+}
+
 /******************************************************************************/
 // Input from the index.html form page
 function trumpEntered() {
@@ -125,7 +131,6 @@ function startRound() {
         return;
     }
     broadcast("start round", {});
-    broadcast("request hand", {num_cards:CARDS_TO_DRAW});
 };
 
 function cardClicked(item){
@@ -213,6 +218,8 @@ function connectAlpha() {
     var alpha_parter = document.getElementsByName("alpha_parter")[0].value;
     console.log("alpha_parter: " + alpha_parter);
     broadcast("alpha partner", {alpha_partner: alpha_parter});
+    var dealer = Math.floor(Math.random() * 4);
+    broadcast("dealer", {dealer: dealer});
 }
 
 /******************************************************************************/
@@ -240,8 +247,6 @@ function onSocketConnected() {
 
     socket.on("out of turn", onOutOfTurnPlay);
 
-    socket.on("request hand", onGetHandCommand);
-
     socket.on("debug msg", onDebugMsg);
 
     socket.on("bid", onBid);
@@ -253,7 +258,15 @@ function onSocketConnected() {
     socket.on("double", onDouble);
 
     socket.on("redouble", onReDouble);
+
+    socket.on("dealer", onDealer);
 };
+
+function onDealer(data) {
+    console.log("setting dealer " + data.dealer + " (" +
+        myAvatar.getPlayerAt(data.dealer) + ").");
+    myAvatar.getRound().setDealer(data.dealer);
+}
 
 function onDouble() {
     console.log("double given.");
@@ -268,6 +281,8 @@ function onReDouble() {
 function onStartRound() {
     console.log("starting round.");
     myAvatar.getRound().start();
+    // fetch 4 cards from the server to start the bidding
+    fetchNewCards();
 }
 
 function onAlphaPartner(data) {
@@ -309,7 +324,7 @@ function onTrumpReceived(data) {
     }
     myAvatar.getTrump().set(data.trump_token);
     // all players receive the remaining cards only after the trump is set
-    socket.emit("get hand", {num_cards: CARDS_TO_DRAW});
+    fetchNewCards();
 }
 
 // adds debugging information to the console which is received from the server.
@@ -379,7 +394,3 @@ function onRenamePlayer(data) {
 function onNewPlayer(data) {
     console.log("New player connected: " + data.name);
 }
-
-function onGetHandCommand(data) {
-    socket.emit("get hand", data);
-};
