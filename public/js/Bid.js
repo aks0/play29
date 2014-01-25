@@ -2,6 +2,8 @@
 var Bid = function() {
 	var
 	bid = null,
+	double_factor = 1,
+	redouble_factor = 1,
 	team = null,
 	player = null;
 
@@ -43,16 +45,30 @@ var Bid = function() {
 	var getPoints = function(isWinner) {
 		var factor = isWinner ? 1 : -1;
 		if (bid <= 20) {
-			return factor;
+			return factor * double_factor * redouble_factor;
 		} else {
-			return (factor * 2);
+			return (factor * 2) * double_factor;
 		}
+	};
+
+	var double = function() {
+		double_factor = 2;
+	};
+
+	var isDouble = function() {
+		return double_factor === 2;
+	};
+
+	var redouble = function() {
+		redouble_factor = 2;
 	};
 
 	var clear = function() {
 		bid = null;
 		team = null;
 		player = null;
+		double_factor = 1;
+		redouble_factor = 1;
 		return this;
 	};
 
@@ -65,6 +81,9 @@ var Bid = function() {
 		getPlayer: getPlayer,
 		setPlayer: setPlayer,
 		getPoints: getPoints,
+		double: double,
+		isDouble: isDouble,
+		redouble: redouble,
 		clear: clear
 	};
 };

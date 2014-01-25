@@ -165,6 +165,28 @@ function enterBid() {
     });
 }
 
+function double() {
+    if (myAvatar.getBid().isEmpty()) {
+        console.log("Double can be given only after bid is set");
+        return;
+    } else if (myAvatar.getBid().isDouble()) {
+        console.log("Double can be given only once.");
+        return;
+    }
+    socket.emit("broadcast", {event:"double", info: {}});
+}
+
+function redouble() {
+    if (myAvatar.getBid().get() > 20) {
+        console.log("For bids >= 21, it is auto-double.");
+        return;
+    } else if (!myAvatar.getBid().isDouble()) {
+        console.log("Re-Double can be given after double only.");
+        return;
+    }
+    socket.emit("broadcast", {event: "redouble", info: {}});
+}
+
 function connectAlpha() {
     var alpha_parter = document.getElementsByName("alpha_parter")[0].value;
     console.log("alpha_parter: " + alpha_parter);
@@ -207,7 +229,21 @@ function onSocketConnected() {
     socket.on("alpha partner", onAlphaPartner);
 
     socket.on("start round", onStartRound);
+
+    socket.on("double", onDouble);
+
+    socket.on("redouble", onReDouble);
 };
+
+function onDouble() {
+    console.log("double given.");
+    myAvatar.getBid().double();
+}
+
+function onReDouble() {
+    console.log("re-double given.");
+    myAvatar.getBid().redouble();
+}
 
 function onStartRound() {
     console.log("starting round.");
@@ -233,9 +269,6 @@ function onBid(data) {
     // the bid-winner must set the trump next before seeing the remaining cards
     if (myAvatar.getName() === data.player) {
         socket.emit("change turn token to", {turnid: myAvatar.getTurnID()});
-    // rest players can see their remaining cards
-    } else {
-        socket.emit("get hand", {num_cards: CARDS_TO_DRAW});
     }
 }
 
@@ -255,9 +288,8 @@ function onTrumpReceived(data) {
         return;
     }
     myAvatar.getTrump().set(data.trump_token);
-    if (myAvatar.getName() === myAvatar.getBid().getPlayer()) {
-        socket.emit("get hand", {num_cards: CARDS_TO_DRAW});
-    }
+    // all players receive the remaining cards only after the trump is set
+    socket.emit("get hand", {num_cards: CARDS_TO_DRAW});
 }
 
 // adds debugging information to the console which is received from the server.
