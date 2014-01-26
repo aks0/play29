@@ -14,6 +14,8 @@ var Pot = function() {
     var
     pot = new Array(),
     lastHand = null,
+    // chance token being passed around
+    cToken = -1,
     cardtokenToTurnIDMap = new Object();
 
     var isEmpty = function() {
@@ -34,6 +36,8 @@ var Pot = function() {
         var card = genCard(card_token);
         pot.push(card);
         cardtokenToTurnIDMap[card_token] = turnID;
+        cToken = (cToken + 1) % 4;
+        console.log("CToken: " + getCToken());
     };
 
     var clear = function() {
@@ -47,6 +51,7 @@ var Pot = function() {
             },
             100
         );
+        cToken = -1;
     };
 
     var size = function() {
@@ -121,6 +126,15 @@ var Pot = function() {
         return lastHand;
     };
 
+    var getCToken = function() {
+        return cToken;
+    };
+
+    var setCToken = function(arg) {
+        cToken = arg;
+        return this;
+    };
+
     return {
         isEmpty: isEmpty,
         addCard: addCard,
@@ -129,6 +143,8 @@ var Pot = function() {
         getPoints: getPoints,
         cardPlayedBy: cardPlayedBy,
         getLastHand: getLastHand,
+        getCToken: getCToken,
+        setCToken: setCToken,
         clear: clear
     };
 };

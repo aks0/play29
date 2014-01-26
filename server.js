@@ -9,8 +9,6 @@ util29 = require("./public/js/Util29").Util29(),
 Deck = require("./public/js/Deck").Deck,
 // card class
 Card = require("./public/js/Card").Card,
-// chance token for the round
-ctoken,
 // Player class
 Player = require("./public/js/Player").Player;
 
@@ -27,7 +25,6 @@ players; // Array of connected players
 function init() {
     players = new Array();
     deck = new Deck();
-    ctoken = -1;
 
     // set up socket to listen on port PORT
     socket = io.listen(PORT);
@@ -92,9 +89,6 @@ function onSocketConnection(client) {
     // including itself
     client.on("broadcast", onBroadcast);
 
-    // reassign turn-token to the winning player
-    client.on("change turn token to", onChangeTurnToken);
-
     // clear state except the connected players
     client.on("clear", onClear);
 };
@@ -120,20 +114,9 @@ function broadcastToAll(client, event, data) {
 }
 
 function onCardToPlay(data) {
-    if (data.turnid !== ctoken) {
-        this.emit("out of turn", {turnid: ctoken});
-        return;
-    }
-
     this.broadcast.emit("remote played card",
             {turnid: data.turnid, card: data.card});
     this.emit("play card", {card: data.card});
-    ctoken = (ctoken + 1) % MAX_PLAYERS;
-}
-
-function onChangeTurnToken(data) {
-    util.log("Turn Token changed to " + data.turnid);
-    ctoken = data.turnid;
 }
 
 function serializePlayer(player) {

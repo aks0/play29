@@ -63,7 +63,7 @@ function roundCompleted(winner_id) {
     } else {
         myAvatar.getRound().next();
         if (myAvatar.getTurnID() === winner_id) {
-            socket.emit("change turn token to", {turnid: winner_id});
+            broadcast("change turn token to", {cToken: winner_id});
         }
     }
 }
@@ -140,10 +140,12 @@ function cardClicked(item){
     if ($(item.parentNode).attr("id").indexOf("pcard") !== -1) {
         console.log("No use clicking a pot card");
         return;
-    }
-
-    if (myAvatar.getTrump().isEmpty()) {
+    } else if (myAvatar.getTrump().isEmpty()) {
         console.log("The trump is not yet set. Poke the bidder!");
+        return;
+    } else if (myAvatar.getPot().getCToken() !== myAvatar.getTurnID()) {
+        console.log("Out of Turn Play. Turn of: " +
+            myAvatar.getPlayerAt(myAvatar.getPot().getCToken()));
         return;
     }
 
@@ -262,8 +264,6 @@ function onSocketConnected() {
 
     socket.on("trump received", onTrumpReceived);
 
-    socket.on("out of turn", onOutOfTurnPlay);
-
     socket.on("debug msg", onDebugMsg);
 
     socket.on("bid", onBid);
@@ -279,7 +279,14 @@ function onSocketConnected() {
     socket.on("dealer", onDealer);
 
     socket.on("cancel round", onCancelRound);
+
+    socket.on("change turn token to", onChangeTurnToken);
 };
+
+function onChangeTurnToken(data) {
+    console.log("Turn Token changed to " + data.cToken);
+    myAvatar.getPot().setCToken(data.cToken);
+}
 
 function onCancelRound() {
     console.log("cancel round received");
@@ -329,7 +336,7 @@ function onBid(data) {
     }
     // the bid-winner must set the trump next before seeing the remaining cards
     if (myAvatar.getName() === data.player) {
-        socket.emit("change turn token to", {turnid: myAvatar.getTurnID()});
+        broadcast("change turn token to", {cToken: myAvatar.getTurnID()});
     }
 }
 
@@ -356,11 +363,6 @@ function onTrumpReceived(data) {
 // adds debugging information to the console which is received from the server.
 function onDebugMsg(data) {
     console.log("DEBUG: " + data.msg);
-}
-
-function onOutOfTurnPlay(data) {
-    console.log("Out of turn play. Turn of " +
-        myAvatar.getPlayerAt(data.turnid));
 }
 
 function onRemotePlayCard(data) {
