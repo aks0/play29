@@ -64,7 +64,7 @@ var Pot = function() {
         for (var i = 1; i < pot.length; i++) {
             if (pot[i].getSuit() !== base_suit) {
                 continue;
-            } else if (trump.isReverse()) {
+            } else if (trump.isOpen() && trump.isReverse()) {
                 if (pot[i].getRank() < pot[winning_card_index].getRank()) {
                     winning_card_index = i;
                 }
@@ -87,7 +87,7 @@ var Pot = function() {
 
         // nobody played a trump
         if (trump_played_index == -1) {
-            return this.handleNoTrumpWinner(trump);
+            return handleNoTrumpWinner(trump);
         }
         
         // somebody played a trump
@@ -103,8 +103,10 @@ var Pot = function() {
     };
 
     var getPotWinner = function(trump) {
+        // neither open nor a suit trump
         if (!trump.isOpen() || !trump.isSuitTrump()) {
             return handleNoTrumpWinner(trump);
+        // open and a suit trump
         } else {
             return handleTrumpWinner(trump);
         }

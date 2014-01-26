@@ -12,7 +12,7 @@ var Trump = function() {
     var
     trump = null,
     // by default trump should be closed.
-    isTrumpOpen = true;
+    isTrumpOpen = false;
 
     var isReverse = function() {
         if (trump.getDenom() === '3') {
@@ -34,6 +34,7 @@ var Trump = function() {
 
     var open = function() {
         isTrumpOpen = true;
+        console.log("Trump is " + toString());
         return this;
     };
 
@@ -43,6 +44,7 @@ var Trump = function() {
 
     var clear = function() {
         trump = null;
+        isTrumpOpen = false;
     };
 
     var isEmpty = function() {

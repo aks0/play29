@@ -143,7 +143,7 @@ function cardClicked(item){
     } else if (myAvatar.getTrump().isEmpty()) {
         console.log("The trump is not yet set. Poke the bidder!");
         return;
-    } else if (myAvatar.getPot().getCToken() !== myAvatar.getTurnID()) {
+    } else if (!myAvatar.isMyTurnToPlay()) {
         console.log("Out of Turn Play. Turn of: " +
             myAvatar.getPlayerAt(myAvatar.getPot().getCToken()));
         return;
@@ -241,6 +241,21 @@ function zeroPointsHand() {
     console.log("You cannot throw since you do have points!");
 }
 
+function openTrump() {
+    console.log("Player requested to open trump.");
+    if (myAvatar.getTrump().isEmpty()) {
+        console.log("Trump has not been set yet.");
+        return;
+    } else if (!myAvatar.isMyTurnToPlay()) {
+        console.log("You can open trump in your chance only.");
+        return;
+    } else if (myAvatar.getPot().size() === 0) {
+        console.log("No cards in pot. Cannot open trump.");
+        return;
+    }
+    broadcast("open trump", {player_id: myAvatar.getTurnID()});
+}
+
 /******************************************************************************/
 // Event-handlers for events triggered from server or other clients 
 function onSocketConnected() {
@@ -281,7 +296,15 @@ function onSocketConnected() {
     socket.on("cancel round", onCancelRound);
 
     socket.on("change turn token to", onChangeTurnToken);
+
+    socket.on("open trump", onOpenTrump);
 };
+
+function onOpenTrump(data) {
+    console.log("Player " + myAvatar.getPlayerAt(data.player_id) + 
+        " has opened trump.");
+    myAvatar.getTrump().open();
+}
 
 function onChangeTurnToken(data) {
     console.log("Turn Token changed to " + data.cToken);

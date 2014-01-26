@@ -201,6 +201,10 @@ var Player = function(l_id, l_name) {
         return (getTurnID() + 7 - getRound().getDealer()) % 4;
     };
 
+    var isMyTurnToPlay = function() {
+        return getPot().getCToken() === getTurnID();
+    };
+
     return {
         getID: getID,
         equals: equals,
@@ -224,6 +228,7 @@ var Player = function(l_id, l_name) {
         getBid: getBid,
         getTeam: getTeam,
         getOrderID: getOrderID,
+        isMyTurnToPlay: isMyTurnToPlay,
         getTrump: getTrump
     };
 };
