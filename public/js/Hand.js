@@ -72,6 +72,16 @@ var Hand = function() {
         return points;
     };
 
+    var hasAllJacks = function() {
+        var count_jacks = 0;
+        for (var i = 0; i < hand.length; i++) {
+            if (hand[i].getDenom() === 'J') {
+                count_jacks++;
+            }
+        }
+        return count_jacks === 4;
+    };
+
     return {
         isEmpty: isEmpty,
         get: get,
@@ -81,6 +91,7 @@ var Hand = function() {
         toString: toString,
         clear: clear,
         getPoints: getPoints,
+        hasAllJacks: hasAllJacks,
         add: add
     };
 };

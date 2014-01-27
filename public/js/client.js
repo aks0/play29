@@ -441,6 +441,11 @@ function onReceiveHand(data) {
         hand_cards += cardHTML(hand.get(i).getDenom(), hand.get(i).getSuit());
     }
     document.getElementById("cards").innerHTML = hand_cards;
+
+    if (hand.hasAllJacks()) {
+        console.log("all jacks present in hand");
+        broadcast("cancel round");
+    }
 }
 
 function onRenamePlayer(data) {
