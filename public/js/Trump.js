@@ -8,6 +8,9 @@ try {
 } catch(err) {
 }
 
+var T_DENOMS = ['2', '3', '4', '5'];
+var T_SUITS = ['S', 'H', 'D', 'C'];
+
 var Trump = function() {
     var
     trump = null,
@@ -77,6 +80,14 @@ var Trump = function() {
         return trump.toString();
     };
 
+    var shuffle = function() {
+        var r_denom = Math.floor(Math.random() * 4);
+        var r_suit = Math.floor(Math.random() * 4);
+        var r_token = T_DENOMS[r_denom] + ":" + T_SUITS[r_suit];
+        console.log("Trump shuffled to: " + r_token);
+        trump = genCard(r_token);
+    }
+
     return {
         isReverse: isReverse,
         isOpen: isOpen,
@@ -89,6 +100,7 @@ var Trump = function() {
         set: set,
         getDenom: getDenom,
         getSuit: getSuit,
+        shuffle: shuffle,
         toString: toString
     };
 };

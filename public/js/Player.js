@@ -219,6 +219,10 @@ var Player = function(l_id, l_name) {
         return true;
     };
 
+    var hasPlayStarted = function() {
+        return !(round.get() === 0 && pot.size() === 0); 
+    }
+
     return {
         getID: getID,
         equals: equals,
@@ -244,6 +248,7 @@ var Player = function(l_id, l_name) {
         getOrderID: getOrderID,
         isMyTurnToPlay: isMyTurnToPlay,
         canOpenTrump: canOpenTrump,
+        hasPlayStarted: hasPlayStarted,
         getTrump: getTrump
     };
 };

@@ -1,4 +1,5 @@
 var
+util29 = new Util29(),
 NUM_PLAYERS = 4,
 // Socket connection
 socket,
@@ -95,11 +96,6 @@ function checkPotWinner() {
     roundCompleted(winner_id);
 }
 
-function fetchNewCards() {
-    socket.emit("get hand",
-        {num_cards: CARDS_TO_DRAW, order_id: myAvatar.getOrderID()});
-}
-
 /******************************************************************************/
 // Input from the index.html form page
 function trumpEntered() {
@@ -107,7 +103,11 @@ function trumpEntered() {
         console.log("Only the bid winner " + myAvatar.getBid().getPlayer() +
             " can set the trump.");
         return;
+    } else if (!myAvatar.getTrump().isEmpty()) {
+        console.log("Trump is already set. You cannot set trump again.");
+        return;
     }
+
     var trump_token = document.getElementsByName("trump")[0].value;
     console.log("Trump Token: " + trump_token);
     var denom = stripID(trump_token)[0];
@@ -116,6 +116,8 @@ function trumpEntered() {
         return;
     }
     broadcast("trump received", {trump_token: trump_token});
+    // all players receive the remaining cards only after the trump is set
+    broadcast("fetch next 4 cards");
 }
 
 function changePlayerName() {
@@ -136,7 +138,9 @@ function startRound() {
         console.log("Not enough players to start the round.");
         return;
     }
-    broadcast("start round", {});
+    broadcast("start round");
+    // fetch 4 cards from the server to start the bidding
+    broadcast("fetch next 4 cards");
 };
 
 function cardClicked(item){
@@ -271,6 +275,24 @@ function cancelRound() {
     broadcast("cancel round");
 }
 
+function shuffleTrump() {
+    console.log("shuffle trump requested");
+    var trump = myAvatar.getTrump();
+    if (myAvatar.getBid().getPlayer() !== myAvatar.getName()) {
+        console.log("cannot shuffle trump since you have not set it.");
+        return;
+    } else if (trump.isEmpty()) {
+        console.log("cannot shuffle trump since it is not set yet.");
+        return;
+    } else if (myAvatar.hasPlayStarted()) {
+        console.log("cannot shuffle trump since play of cards has started");
+        return;
+    }
+    trump.shuffle();
+    var new_trump_token = util29.token(trump.getDenom(), trump.getSuit());
+    broadcast("trump received", {trump_token: new_trump_token});
+}
+
 /******************************************************************************/
 // Event-handlers for events triggered from server or other clients 
 function onSocketConnected() {
@@ -313,6 +335,8 @@ function onSocketConnected() {
     socket.on("change turn token to", onChangeTurnToken);
 
     socket.on("open trump", onOpenTrump);
+
+    socket.on("fetch next 4 cards", onFetchNext4Cards);
 };
 
 function onOpenTrump(data) {
@@ -352,8 +376,6 @@ function onReDouble() {
 function onStartRound() {
     console.log("starting round.");
     myAvatar.getRound().start();
-    // fetch 4 cards from the server to start the bidding
-    fetchNewCards();
 }
 
 function onAlphaPartner(data) {
@@ -389,13 +411,7 @@ function onReceiveAvatar(data) {
 
 function onTrumpReceived(data) {
     console.log("trump card received: " + data.trump_token);
-    if (!myAvatar.getTrump().isEmpty()) {
-        console.log("Trump is already set. You cannot set trump again.");
-        return;
-    }
     myAvatar.getTrump().set(data.trump_token);
-    // all players receive the remaining cards only after the trump is set
-    fetchNewCards();
 }
 
 // adds debugging information to the console which is received from the server.
@@ -464,4 +480,9 @@ function onRenamePlayer(data) {
 
 function onNewPlayer(data) {
     console.log("New player connected: " + data.name);
+}
+
+function onFetchNext4Cards() {
+    socket.emit("get hand",
+        {num_cards: CARDS_TO_DRAW, order_id: myAvatar.getOrderID()});
 }

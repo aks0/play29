@@ -33,9 +33,17 @@ var Util29 = function() {
         arr[j] = tmp;
     };
 
+    /**
+     * construct a ':' separated token from the given arguments
+     */
+    var token = function(arg1, arg2) {
+        return arg1 + ":" + arg2;
+    };
+
     return {
         toString: toString,
         swap: swap,
+        token: token,
         toProperNoun: toProperNoun
     };
 };
