@@ -19,7 +19,7 @@ var Hand = function() {
     };
 
     var get = function(index) {
-        if (index >= hand.length) {
+        if (index >= hand.length || index < 0) {
             return null;
         }
         return hand[index];

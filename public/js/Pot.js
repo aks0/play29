@@ -25,6 +25,13 @@ var Pot = function() {
         return false;
     };
 
+    var get = function(index) {
+        if (index >= pot.length || index < 0) {
+            return null;
+        }
+        return pot[index];
+    };
+
     // token of cards in the pot
     var addCard = function(card_token, turnID) {
         if (pot.length === 4) {
@@ -138,6 +145,7 @@ var Pot = function() {
     };
 
     return {
+        get: get,
         isEmpty: isEmpty,
         addCard: addCard,
         size: size,

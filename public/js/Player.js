@@ -205,6 +205,20 @@ var Player = function(l_id, l_name) {
         return getPot().getCToken() === getTurnID();
     };
 
+    var canOpenTrump = function() {
+        if (pot.length === 0) {
+            console.log("no cards in pot. cannot open trump.");
+            return false;
+        }
+        var base_suit = pot.get(0).getSuit();
+        for (var i = 0; i < hand.length(); i++) {
+            if (hand.get(i).getSuit() === base_suit) {
+                return false;
+            }
+        }
+        return true;
+    };
+
     return {
         getID: getID,
         equals: equals,
@@ -229,6 +243,7 @@ var Player = function(l_id, l_name) {
         getTeam: getTeam,
         getOrderID: getOrderID,
         isMyTurnToPlay: isMyTurnToPlay,
+        canOpenTrump: canOpenTrump,
         getTrump: getTrump
     };
 };
