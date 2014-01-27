@@ -266,6 +266,11 @@ function openTrump() {
     broadcast("open trump", {player_id: myAvatar.getTurnID()});
 }
 
+function cancelRound() {
+    console.log("forcefully cancelling the round");
+    broadcast("cancel round");
+}
+
 /******************************************************************************/
 // Event-handlers for events triggered from server or other clients 
 function onSocketConnected() {
