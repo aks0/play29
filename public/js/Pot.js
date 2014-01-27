@@ -65,13 +65,16 @@ var Pot = function() {
         return pot.length;
     };
 
-    var handleNoTrumpWinner = function(trump) {
+    var handleNoTrumpWinner = function(trump, current_round_id) {
         var winning_card_index = 0;
         var base_suit = pot[winning_card_index].getSuit();
         for (var i = 1; i < pot.length; i++) {
             if (pot[i].getSuit() !== base_suit) {
                 continue;
-            } else if (trump.isOpen() && trump.isReverse()) {
+            } else if (trump.isOpen() &&
+                trump.isReverse() &&
+                // reverse trump is activated in the next hand play only
+                trump.openedInRound() < current_round_id) {
                 if (pot[i].getRank() < pot[winning_card_index].getRank()) {
                     winning_card_index = i;
                 }
@@ -109,10 +112,10 @@ var Pot = function() {
         return pot[winning_card_index];
     };
 
-    var getPotWinner = function(trump) {
+    var getPotWinner = function(trump, current_round_id) {
         // neither open nor a suit trump
         if (!trump.isOpen() || !trump.isSuitTrump()) {
-            return handleNoTrumpWinner(trump);
+            return handleNoTrumpWinner(trump, current_round_id);
         // open and a suit trump
         } else {
             return handleTrumpWinner(trump);

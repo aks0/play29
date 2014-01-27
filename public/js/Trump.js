@@ -11,6 +11,7 @@ try {
 var Trump = function() {
     var
     trump = null,
+    roundID = -1,
     // by default trump should be closed.
     isTrumpOpen = false;
 
@@ -32,8 +33,12 @@ var Trump = function() {
         return !(isReverse() || isNoTrump());
     };
 
-    var open = function() {
+    var open = function(round_id) {
+        if (round_id === undefined) {
+            throw "You must define the round_id in order to open trump";
+        }
         isTrumpOpen = true;
+        roundID =  round_id;
         console.log("Trump is " + toString());
         return this;
     };
@@ -42,9 +47,14 @@ var Trump = function() {
         return isTrumpOpen;
     };
 
+    var openedInRound = function() {
+        return roundID;
+    };
+
     var clear = function() {
         trump = null;
         isTrumpOpen = false;
+        roundID = -1;
     };
 
     var isEmpty = function() {
@@ -74,6 +84,7 @@ var Trump = function() {
         isNoTrump: isNoTrump,
         isSuitTrump: isSuitTrump,
         clear: clear,
+        openedInRound: openedInRound,
         isEmpty: isEmpty,
         set: set,
         getDenom: getDenom,

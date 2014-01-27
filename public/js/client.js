@@ -79,7 +79,10 @@ function checkPotWinner() {
     if (pot.size() !== 4 || myAvatar.getTrump().isEmpty()) {
         return;
     }
-    var winning_card = pot.getPotWinner(myAvatar.getTrump());
+    var winning_card = pot.getPotWinner(
+        myAvatar.getTrump(),
+        myAvatar.getRound().get()
+    );
     console.log("Winning Card: " + winning_card.serialize());
     var winner_id = pot.cardPlayedBy(winning_card.serialize());
     console.log("Winner: " + winner_id);
@@ -310,7 +313,7 @@ function onSocketConnected() {
 function onOpenTrump(data) {
     console.log("Player " + myAvatar.getPlayerAt(data.player_id) + 
         " has opened trump.");
-    myAvatar.getTrump().open();
+    myAvatar.getTrump().open(myAvatar.getRound().get());
 }
 
 function onChangeTurnToken(data) {
