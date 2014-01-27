@@ -50,6 +50,10 @@ function roundCompleted(winner_id) {
         myAvatar.addPoints(winner_id, 1);
         console.log("Last hand winner " + myAvatar.getPlayerAt(winner_id) +
             " gets 1 extra point.");
+        if (!myAvatar.getTrump().isOpen()) {
+            broadcast("cancel round");
+            return;
+        }
         var game_scores = myAvatar.getGameScores();
         var bid = myAvatar.getBid();
         game_scores[bid.getTeam()].updateScores(
