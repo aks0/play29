@@ -204,10 +204,14 @@ var Player = function(l_id, l_name) {
         if (pot.length === 0) {
             console.log("no cards in pot. cannot open trump.");
             return false;
+        } else if (bid.getPlayer() === name && trump.isReverse()) {
+            console.log("trump setter cannot open reverse trump");
+            return false;
         }
         var base_suit = pot.get(0).getSuit();
         for (var i = 0; i < hand.length(); i++) {
             if (hand.get(i).getSuit() === base_suit) {
+                console.log("you have a card of this suit.");
                 return false;
             }
         }

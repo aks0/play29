@@ -274,7 +274,7 @@ function openTrump() {
         console.log("No cards in pot. Cannot open trump.");
         return;
     } else if (!myAvatar.canOpenTrump()) {
-        console.log("You have a card of this suit. Cannot open trump.");
+        console.log("You cannot open trump.");
         return;
     }
     broadcast("open trump", {player_id: myAvatar.getTurnID()});
