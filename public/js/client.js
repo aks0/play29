@@ -145,7 +145,7 @@ function startRound() {
 
 function cardClicked(item){
     console.log("User clicked card " + $(item).attr("id"));
-    var id_token = $(item).attr("id");
+    var card_token = $(item).attr("id");
 
     // the pot cards are un-clickable
     if ($(item.parentNode).attr("id").indexOf("pcard") !== -1) {
@@ -158,10 +158,20 @@ function cardClicked(item){
         console.log("Out of Turn Play. Turn of: " +
             myAvatar.getPlayerAt(myAvatar.getPot().getCToken()));
         return;
+    // 7th card is set as trump
+    } else if (myAvatar.getTrump().isSeventhCard() &&
+        // player clicked the 7th card to play
+        myAvatar.getTrump().getSeventhCard().getToken() === card_token &&
+        // trump is not yet open
+        !myAvatar.getTrump().isOpen() &&
+        // it is not the last remaining card
+        myAvatar.getHand().length() !== 1) {
+        console.log("Cannot play this card, until trump is open.");
+        return;
     }
 
     socket.emit("select card to play",
-        {turnid: myAvatar.getTurnID(), card: id_token});
+        {turnid: myAvatar.getTurnID(), card: card_token});
 }
 
 function showLastHand() {
@@ -293,6 +303,21 @@ function shuffleTrump() {
     broadcast("trump received", {trump_token: new_trump_token});
 }
 
+function seventhCard() {
+    console.log("user wants to select 7th card as trump.");
+    if (myAvatar.getName() !== myAvatar.getBid().getPlayer()) {
+        console.log("Only the bid winner " + myAvatar.getBid().getPlayer() +
+            " can set the trump.");
+        return;
+    } else if (!myAvatar.getTrump().isEmpty()) {
+        console.log("Trump is already set. You cannot set trump again.");
+        return;
+    }
+    myAvatar.getTrump().seventhCard();
+    // all players receive the remaining cards only after the trump is set
+    broadcast("fetch next 4 cards");
+}
+
 /******************************************************************************/
 // Event-handlers for events triggered from server or other clients 
 function onSocketConnected() {
@@ -337,7 +362,18 @@ function onSocketConnected() {
     socket.on("open trump", onOpenTrump);
 
     socket.on("fetch next 4 cards", onFetchNext4Cards);
+
+    socket.on("seventh card", onSeventhCard);
 };
+
+function onSeventhCard(data) {
+    console.log("bidder set seventh card: " + data.card);
+    myAvatar.getTrump().setSeventhCard(data.card);
+    var trump_token =
+        util29.token("4", myAvatar.getTrump().getSeventhCard().getSuit());
+    console.log("client: Trump set is: " + trump_token);
+    myAvatar.getTrump().set(trump_token);
+}
 
 function onOpenTrump(data) {
     console.log("Player " + myAvatar.getPlayerAt(data.player_id) + 
@@ -459,6 +495,11 @@ function onReceiveHand(data) {
         hand.add(genCard(data[i]));
     }
     console.log("Hand: " + hand.toString());
+
+    if (myAvatar.getName() === myAvatar.getBid().getPlayer() &&
+        myAvatar.getTrump().isSeventhCard()) {
+        broadcast("seventh card", {card: hand.get(6).getToken()});
+    }
 
     var hand_cards = "";
     for(var i = 0; i < hand.length(); i++) {

@@ -1,4 +1,5 @@
 var
+util29 = new Util29(),
 Card;
 
 // server code
@@ -15,6 +16,8 @@ var Trump = function() {
     var
     trump = null,
     roundID = -1,
+    is7thCard = false,
+    _7thCard = null,
     // by default trump should be closed.
     isTrumpOpen = false;
 
@@ -34,6 +37,24 @@ var Trump = function() {
 
     var isSuitTrump = function() {
         return !(isReverse() || isNoTrump());
+    };
+
+    var seventhCard = function() {
+        is7thCard = true;
+        return this;
+    };
+
+    var isSeventhCard = function() {
+        return is7thCard;
+    };
+
+    var setSeventhCard = function(card_token) {
+        _7thCard = genCard(card_token);
+        return this;
+    };
+
+    var getSeventhCard = function() {
+        return _7thCard;
     };
 
     var open = function(round_id) {
@@ -58,6 +79,8 @@ var Trump = function() {
         trump = null;
         isTrumpOpen = false;
         roundID = -1;
+        isSeventhCard = false;
+        _7thCard = null;
     };
 
     var isEmpty = function() {
@@ -98,6 +121,10 @@ var Trump = function() {
         openedInRound: openedInRound,
         isEmpty: isEmpty,
         set: set,
+        seventhCard: seventhCard,
+        isSeventhCard: isSeventhCard,
+        setSeventhCard: setSeventhCard,
+        getSeventhCard: getSeventhCard,
         getDenom: getDenom,
         getSuit: getSuit,
         shuffle: shuffle,

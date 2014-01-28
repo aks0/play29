@@ -90,6 +90,10 @@ var Card = function(denom, suit) {
         return false;
     };
 
+    var getToken = function() {
+        return getDenom() + ":" + getSuit();
+    };
+
     var toString = function() {
         var
         s_denom = util29.toProperNoun(getDenomName()),
@@ -110,6 +114,7 @@ var Card = function(denom, suit) {
         getPoints: getPoints,
         equals: equals,
         serialize: serialize,
+        getToken: getToken,
         toString: toString
     };
 };
