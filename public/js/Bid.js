@@ -77,6 +77,17 @@ var Bid = function() {
 		return this;
 	};
 
+	var shownKQPair = function(showing_player_id) {
+		var showing_team = showing_player_id % 2;
+		var factor = 1;
+		if (showing_team !== team) {
+			factor = -1;
+		}
+		bid = factor === 1 ? Math.max(17, bid - 4) : Math.min(bid + 4, 29);
+		console.log("new bid = " + bid);
+		return this;
+	};
+
 	return {
 		get: get,
 		set: set,
@@ -89,6 +100,7 @@ var Bid = function() {
 		double: double,
 		isDouble: isDouble,
 		redouble: redouble,
+		shownKQPair: shownKQPair,
 		clear: clear
 	};
 };

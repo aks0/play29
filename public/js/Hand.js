@@ -82,6 +82,17 @@ var Hand = function() {
         return count_jacks === 4;
     };
 
+    var hasKQPair = function(trump) {
+        var counter = 0;
+        for (var i = 0; i < hand.length; i++) {
+            if (hand[i].getSuit() === trump.getSuit() &&
+                (hand[i].getDenom() === 'Q' || hand[i].getDenom() === 'K')) {
+                counter++;
+            }
+        }
+        return counter === 2;
+    };
+
     return {
         isEmpty: isEmpty,
         get: get,
@@ -92,6 +103,7 @@ var Hand = function() {
         clear: clear,
         getPoints: getPoints,
         hasAllJacks: hasAllJacks,
+        hasKQPair: hasKQPair,
         add: add
     };
 };

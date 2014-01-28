@@ -109,7 +109,10 @@ var Pot = function() {
                 winning_card_index = i;
             }
         }
-        return pot[winning_card_index];
+
+        var winning_card = pot[winning_card_index];
+        trump.playedTrump(cardtokenToTurnIDMap[winning_card.getToken()]);
+        return winning_card;
     };
 
     var getPotWinner = function(trump, current_round_id) {

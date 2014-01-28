@@ -18,6 +18,8 @@ var Trump = function() {
     roundID = -1,
     is7thCard = false,
     _7thCard = null,
+    // boolean array(2) to indicate whether each team played a trump or not
+    _playedTrump = [false, false],
     // by default trump should be closed.
     isTrumpOpen = false;
 
@@ -81,6 +83,7 @@ var Trump = function() {
         roundID = -1;
         is7thCard = false;
         _7thCard = null;
+        _playedTrump = [false, false];
     };
 
     var isEmpty = function() {
@@ -109,7 +112,16 @@ var Trump = function() {
         var r_token = T_DENOMS[r_denom] + ":" + T_SUITS[r_suit];
         console.log("Trump shuffled to: " + r_token);
         trump = genCard(r_token);
-    }
+    };
+
+    var playedTrump = function(player_id) {
+        var team_id = player_id % 2;
+        _playedTrump[team_id] = true;
+    };
+
+    var hasPlayedTrump = function(team_id) {
+        return _playedTrump[team_id];
+    };
 
     return {
         isReverse: isReverse,
@@ -128,6 +140,8 @@ var Trump = function() {
         getDenom: getDenom,
         getSuit: getSuit,
         shuffle: shuffle,
+        playedTrump: playedTrump,
+        hasPlayedTrump: hasPlayedTrump,
         toString: toString
     };
 };

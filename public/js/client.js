@@ -318,6 +318,25 @@ function seventhCard() {
     broadcast("fetch next 4 cards");
 }
 
+function showKQPair() {
+    console.log("player wants to show K/Q pair");
+    var trump = myAvatar.getTrump();
+    if (!trump.isOpen()) {
+        console.log("trump is not yet open");
+        return;
+    } else if (!trump.isSuitTrump()) {
+        console.log("it is not a suit trump");
+        return;
+    } else if (!trump.hasPlayedTrump(myAvatar.getTeam())) {
+        console.log("Your team has not won a trump hand yet!");
+        return;
+    } else if (!myAvatar.getHand().hasKQPair(myAvatar.getTrump())) {
+        console.log("you do not have KQ pair");
+        return;
+    }
+    broadcast("show KQ pair", {player_id: myAvatar.getTurnID()});
+}
+
 /******************************************************************************/
 // Event-handlers for events triggered from server or other clients 
 function onSocketConnected() {
@@ -364,7 +383,15 @@ function onSocketConnected() {
     socket.on("fetch next 4 cards", onFetchNext4Cards);
 
     socket.on("seventh card", onSeventhCard);
+
+    socket.on("show KQ pair", onShowKQPair);
 };
+
+function onShowKQPair(data) {
+    console.log("Player " + myAvatar.getPlayerAt(data.player_id) + 
+        " showed KQ pair");
+    myAvatar.getBid().shownKQPair(data.player_id);
+}
 
 function onSeventhCard(data) {
     console.log("bidder set seventh card: " + data.card);
