@@ -368,11 +368,12 @@ function onSocketConnected() {
 
 function onSeventhCard(data) {
     console.log("bidder set seventh card: " + data.card);
-    myAvatar.getTrump().setSeventhCard(data.card);
-    var trump_token =
-        util29.token("4", myAvatar.getTrump().getSeventhCard().getSuit());
+    var trump = myAvatar.getTrump();
+    trump.clear();
+    trump.setSeventhCard(data.card);
+    var trump_token = util29.token("4", trump.getSeventhCard().getSuit());
     console.log("client: Trump set is: " + trump_token);
-    myAvatar.getTrump().set(trump_token);
+    trump.set(trump_token);
 }
 
 function onOpenTrump(data) {
@@ -447,7 +448,9 @@ function onReceiveAvatar(data) {
 
 function onTrumpReceived(data) {
     console.log("trump card received: " + data.trump_token);
-    myAvatar.getTrump().set(data.trump_token);
+    var trump = myAvatar.getTrump();
+    trump.clear();
+    trump.set(data.trump_token);
 }
 
 // adds debugging information to the console which is received from the server.

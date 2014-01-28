@@ -79,7 +79,7 @@ var Trump = function() {
         trump = null;
         isTrumpOpen = false;
         roundID = -1;
-        isSeventhCard = false;
+        is7thCard = false;
         _7thCard = null;
     };
 
