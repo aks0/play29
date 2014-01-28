@@ -8,9 +8,7 @@ util29 = require("./public/js/Util29").Util29(),
 // playing cards deck class
 Deck = require("./public/js/Deck").Deck,
 // card class
-Card = require("./public/js/Card").Card,
-// Player class
-Player = require("./public/js/Player").Player;
+Card = require("./public/js/Card").Card;
 
 var
 PORT = 8070,
@@ -20,10 +18,10 @@ socket, // Socket controller
 deck,   // global deck for the game for each round
 hands = new Object(), // hands which are to be given to players in order
 pseudonames = ['phi', 'gamma', 'beta', 'alpha'],
-players; // Array of connected players
+players; // Map of connected players: id -> name
 
 function init() {
-    players = new Array();
+    players = new Object();
     deck = new Deck();
 
     // set up socket to listen on port PORT
@@ -49,26 +47,24 @@ var setEventHandlers = function () {
 };
 
 function updatePlayersInfo(client) {
-    var new_player = new Player(client.id, pseudonames.pop());
-    client.emit("receive avatar",
-        {id: new_player.getID(), name: new_player.getName()});
+    var id = client.id;
+    var name = pseudonames.pop();
+    client.emit("receive avatar", {id: id, name: name});
 
     // Broadcast new player to connected socket clients
-    client.broadcast.emit("new player", {id: new_player.getID(),
-                       name: new_player.getName()});
+    client.broadcast.emit("new player", {id: id, name: name});
 
     // Send existing players to the new player
-    for (var i = 0; i < players.length; i++) {
-        var existing_player = players[i];
-        client.emit("new player", {id: existing_player.getID(),
-                     name: existing_player.getName()});
+    var keys = Object.keys(players);
+    for (var i = 0; i < keys.length; i++) {
+        client.emit("new player", {id: keys[i], name: players[keys[i]]});
     };
 
     // add new player to the players array
-    players.push(new_player);
-    util.log("Players: " + util29.toString(players));
+    players[id] = name;
+    util.log("Players: " + Object.keys(players));
 
-    if (players.length === MAX_PLAYERS) {
+    if (Object.keys(players).length === MAX_PLAYERS) {
         broadcastToAll(client, "playing cycle", serializePlayers(players));
     }
 }
@@ -119,18 +115,13 @@ function onCardToPlay(data) {
     this.emit("play card", {card: data.card});
 }
 
-function serializePlayer(player) {
-    var sr = new Object();
-    sr.id = player.getID();
-    sr.name = player.getName();
-    return sr;
-}
-
 function serializePlayers(players) {
     var sr = new Object();
-    sr.length = players.length;
-    for (var i = 0; i < players.length; i++) {
-        sr[i] = serializePlayer(players[i]);
+    var keys = Object.keys(players);
+    sr.length = keys.length;
+    for (var i = 0; i < keys.length; i++) {
+        sr[i] = new Object();
+        sr[i].name = players[keys[i]];
     }
     return sr;
 }
@@ -145,7 +136,7 @@ function serializeHand(hand) {
 }
 
 function onGetHandRequest(data) {
-    util.log("Player " + this.id + " is asking for " + data.num_cards +
+    util.log("Player " + players[this.id] + " is asking for " + data.num_cards +
          " cards,order_id: " + data.order_id);
     if (Object.keys(hands).length === 0) {
         if (deck.isEmpty()) {

@@ -52,11 +52,6 @@ var Player = function(l_id, l_name) {
         return name;
     };
 
-    var setName = function(to_name) {
-        name = to_name;
-        return this;
-    };
-
     var equals = function(player) {
         return (name === player.getName()) && (id === player.getID());
     };
@@ -227,7 +222,6 @@ var Player = function(l_id, l_name) {
         getID: getID,
         equals: equals,
         toString: toString,
-        setName: setName,
         getName: getName,
         getTurnID: getTurnID,
         setAlphaPartner: setAlphaPartner,
