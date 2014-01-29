@@ -16,7 +16,7 @@
   h1 { color: red; font-size: 96px; }
 
   /* Pot */
-  #pot {position: relative; height: 60%; width: 40%; /*background-color:#00ffff;*/
+  #pot {position: relative; height: 60%; width: 40%;
        z-index:-5; background-image:url('./../img/table.JPG')}
 
   .pot_card_0 {position: absolute; bottom: 2%; left: 30%; }
