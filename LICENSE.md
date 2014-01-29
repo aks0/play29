@@ -48,3 +48,7 @@ This library John Resig's jQuery library.
 
 - website: [http://jquery.com/](http://jquery.com/)
 - author: [John Resig](https://github.com/jeresig)
+
+## Playing Table Image
+
+Obtained from [123RF](http://www.123rf.com/photo_7233010_close-up-of-green-poker-table-felt-background-xxl-size.html).
